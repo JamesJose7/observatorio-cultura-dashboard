@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
-import Header from "./Header/Header";
+import Header from "./bundle/Header/Header";
+import FormDashboard from "./bundle/Dashboard/FormDashboard";
 
 
 function App() {
@@ -9,7 +10,9 @@ function App() {
       <Header/>
 
       <div className="container">
-        <p>Content</p>
+
+        <FormDashboard/>
+
       </div>
     </div>
   );
