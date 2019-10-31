@@ -1,5 +1,6 @@
 import React from 'react'
 import '../../App.css'
+import config from '../../config'
 
 class FormDashboard extends React.Component {
     state = {
@@ -9,11 +10,12 @@ class FormDashboard extends React.Component {
     }
 
     fetchFormData() {
-        var formId = 'abSepFikh7Kh6E6dwrbxAq'
-        // Where we're fetching data from
-        fetch('https://cors-anywhere.herokuapp.com/https://kf.kobotoolbox.org/api/v2/assets/' + formId + '/data.json', {
+        let formId = 'abSepFikh7Kh6E6dwrbxAq'
+        const url = `https://cors-anywhere.herokuapp.com/https://kf.kobotoolbox.org/api/v2/assets/${ formId }/data.json`
+
+        fetch(url, {
             headers: new Headers({
-                'Authorization': 'Token 1dda84dc2ee0d5b04dcc8015bfbba66de32f080f',
+                'Authorization': config.koboToken,
                 'X-Requested-With': 'application/json'
             }),
         })
