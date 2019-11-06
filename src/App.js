@@ -5,17 +5,14 @@ import FormDashboard from "./bundle/Dashboard/FormDashboard";
 
 
 function App() {
-  return (
-    <div className="App">
-      <Header/>
+    return (
+        <div className="App">
+            <Header/>
 
-      <div className="container">
+            <FormDashboard/>
 
-        <FormDashboard/>
-
-      </div>
-    </div>
-  );
+        </div>
+    );
 }
 
 export default App;
