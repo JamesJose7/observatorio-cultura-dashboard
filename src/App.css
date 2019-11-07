@@ -27,7 +27,7 @@ header {
 .card {
   background-color: #f4f9f8 !important;
   padding: 10px 15px;
-  margin: 25px 0;
+  margin: 25px 0 0 0;
   min-height: 260px;
   border: none !important;
   box-shadow: 0 10px 8px -4px rgba(0,0,0,.1);
@@ -53,10 +53,22 @@ header {
 
 .card-value span {
   color: rgba(0,0,0,.5);
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
+.card-value p {
+  margin: 0;
+}
+
+.card-value .row {
+  height: 40px;
+  line-height: 40px;
+}
 
 .chart-container > div{
   height: 230px;
+}
+
+.card-right-border {
+  border-right: 1px solid rgba(100,100,100,.1);
 }

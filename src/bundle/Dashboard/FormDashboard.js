@@ -354,7 +354,7 @@ class FormDashboard extends React.Component {
                                     <div className="card">
                                         <div className="row">
                                             {/*// <!-- row to include all mini-charts -->*/}
-                                            <div className="col-sm-4">
+                                            <div className="col-sm-4 card-right-border">
                                                 <div className="card-heading text-center">
                                                     <h2>Hora del evento</h2>
                                                 </div>
@@ -401,7 +401,7 @@ class FormDashboard extends React.Component {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="col-sm-4">
+                                            <div className="col-sm-4 card-right-border">
                                                 <div className="card-heading text-center">
                                                     <h2>Es parte del FIAV?</h2>
                                                 </div>
@@ -504,8 +504,12 @@ class FormDashboard extends React.Component {
 
                         // If there is a delay in data, let's let the user know it's loading
                     ) : (
-                        <div className="placeholder">
-                            <h1 className="align-content-center align-items-center">Loading...</h1>
+                        <div className="placeholder container-fluid">
+                            <div className="row align-items-center" style={{minHeight: "80vh"}}>
+                                <div className="col-6 mx-auto">
+                                    <h1 className="text-center">Loading...</h1>
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>
