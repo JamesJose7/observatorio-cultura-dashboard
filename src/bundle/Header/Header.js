@@ -7,7 +7,7 @@ class Header extends React.Component {
 
         return(
             <header>
-                <Nav className="navbar navbar-expand-lg is-white is-dark-text container">
+                <Nav className="navbar navbar-expand-lg is-white is-dark-text container-fluid">
                     <div className="navbar-brand h1 mb-0 text-large font-medium">
                         UTPL - Observatorio Cultural
                     </div>
