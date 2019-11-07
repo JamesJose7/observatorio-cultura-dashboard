@@ -9,7 +9,10 @@ function App() {
         <div className="App">
             <Header/>
 
-            <FormDashboard/>
+            <FormDashboard
+                formName={"Escenarios públicos"}
+                submissionsLink={"https://kc.kobotoolbox.org/jeeguiguren/reports/abSepFikh7Kh6E6dwrbxAq/export.xlsx"}
+            />
 
         </div>
     );

@@ -209,6 +209,20 @@ class FormDashboard extends React.Component {
                     {!isLoading ? (
                         <div className="container-fluid">
 
+                            <div className="row" id="dashboard-header">
+                                <div className="col-8">
+                                    <h2>{this.props.formName}</h2>
+                                </div>
+                                <div className="col-4 text-right">
+                                    <a className="btn btn-link download-submissions" href={this.props.submissionsLink}>
+                                        Descargar datos
+                                        <i className="material-icons">
+                                            cloud_download
+                                        </i>
+                                    </a>
+                                </div>
+                            </div>
+
                             {/*// <!-- kpi section -->*/}
                             <div className="row">
                                 <div className="col-lg-3 col-sm-6">
@@ -341,7 +355,7 @@ class FormDashboard extends React.Component {
                                         <div className="row">
                                             {/*// <!-- row to include all mini-charts -->*/}
                                             <div className="col-sm-4">
-                                                <div className="card-heading">
+                                                <div className="card-heading text-center">
                                                     <h2>Hora del evento</h2>
                                                 </div>
                                                 <div className="chart-container">
@@ -367,7 +381,7 @@ class FormDashboard extends React.Component {
                                                                     anchor: 'bottom',
                                                                     direction: 'row',
                                                                     translateY: 56,
-                                                                    itemWidth: 60,
+                                                                    itemWidth: 75,
                                                                     itemHeight: 18,
                                                                     itemTextColor: '#999',
                                                                     symbolSize: 18,
@@ -387,7 +401,7 @@ class FormDashboard extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="col-sm-4">
-                                                <div className="card-heading">
+                                                <div className="card-heading text-center">
                                                     <h2>Es parte del FIAV?</h2>
                                                 </div>
                                                 <div className="chart-container">
@@ -433,7 +447,7 @@ class FormDashboard extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="col-sm-4">
-                                                <div className="card-heading">
+                                                <div className="card-heading text-center">
                                                     <h2>Categoría del evento</h2>
                                                 </div>
                                                 <div className="chart-container">
@@ -459,7 +473,7 @@ class FormDashboard extends React.Component {
                                                                     anchor: 'bottom',
                                                                     direction: 'row',
                                                                     translateY: 30,
-                                                                    itemWidth: 85,
+                                                                    itemWidth: 92,
                                                                     itemHeight: 18,
                                                                     itemTextColor: '#999',
                                                                     itemDirection: 'top-to-bottom',
