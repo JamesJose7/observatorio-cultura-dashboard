@@ -1,7 +1,46 @@
-/* Header */
+/* Base styles */
+body {
+  background-color: #ebf0f1 !important;
+  font-family: 'Montserrat', sans-serif !important;
+}
 
+/* Header */
 header {
   background-color: #173f5f;
   padding: 7px 0;
   color: #fff;
+}
+
+/* Dashboard */
+
+.card {
+  background-color: #f4f9f8 !important;
+  padding: 10px 15px;
+  margin: 25px 0;
+  min-height: 260px;
+  border: none !important;
+  box-shadow: 0 10px 8px -4px rgba(0,0,0,.1);
+}
+
+.card-heading h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.card-value {
+  font-size: 1.5em;
+}
+
+.card-value div {
+  margin: 12px;
+}
+
+.card-value span {
+  color: rgba(0,0,0,.5);
+  font-size: 1.2rem;
+}
+
+
+.chart-container > div{
+  height: 300px;
 }

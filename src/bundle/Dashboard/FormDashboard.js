@@ -199,12 +199,23 @@ class FormDashboard extends React.Component {
                                 <div className="col-lg-3 col-sm-6">
                                     <div className="card">
                                         <div className="card-heading">
-                                            <div>
-                                                Promedio de asistentes
-                                            </div>
+                                            <h2>
+                                                Asistentes
+                                            </h2>
                                         </div>
                                         <div className="card-value">
-                                            { round(this.state.avgAsistentes) }
+                                            <div className="row">
+                                                <span className="col-6">Min</span>
+                                                <p className="col-6">{ this.state.minValorEntrada }</p>
+                                            </div>
+                                            <div className="row">
+                                                <span className="col-6">Max</span>
+                                                <p className="col-6">{ this.state.minValorEntrada }</p>
+                                            </div>
+                                            <div className="row">
+                                                <span className="col-6">Promedio</span>
+                                                <p className="col-6">{ round(this.state.avgAsistentes) }</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -212,12 +223,23 @@ class FormDashboard extends React.Component {
                                 <div className="col-lg-3 col-sm-6">
                                     <div className="card">
                                         <div className="card-heading">
-                                            <div>
-                                                Promedio de aforo de espacio
-                                            </div>
+                                            <h2>
+                                                Aforo de espacio
+                                            </h2>
                                         </div>
                                         <div className="card-value">
-                                            { round(this.state.avgAforoEspacio) }
+                                            <div className="row">
+                                                <span className="col-6">Min</span>
+                                                <p className="col-6">{ this.state.minValorEntrada }</p>
+                                            </div>
+                                            <div className="row">
+                                                <span className="col-6">Max</span>
+                                                <p className="col-6">{ this.state.minValorEntrada }</p>
+                                            </div>
+                                            <div className="row">
+                                                <span className="col-6">Promedio</span>
+                                                <p className="col-6">{ round(this.state.avgAforoEspacio) }</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -225,21 +247,21 @@ class FormDashboard extends React.Component {
                                 <div className="col-lg-3 col-sm-6">
                                     <div className="card">
                                         <div className="card-heading">
-                                            <div>
+                                            <h2>
                                                 Tipo de entrada
-                                            </div>
+                                            </h2>
                                         </div>
-                                        <div className="card-value">
+                                        <div className="">
                                             <div className="chart-container">
                                                 {/*// <!-- chart -->*/}
                                                 <div style={{height: "200px"}}>
                                                     <ResponsivePie
                                                         data={this.state.costoEvento}
-                                                        margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
+                                                        margin={{ top: 30, right: 30, bottom: 30, left: 80 }}
                                                         innerRadius={0.5}
                                                         padAngle={0.7}
                                                         cornerRadius={3}
-                                                        colors={{ scheme: 'category10' }}
+                                                        colors={{ scheme: 'paired' }}
                                                         borderWidth={1}
                                                         borderColor={{ from: 'color', modifiers: [ [ 'darker', 0.2 ] ] }}
                                                         enableRadialLabels={false}
@@ -250,11 +272,11 @@ class FormDashboard extends React.Component {
                                                         motionDamping={15}
                                                         legends={[
                                                             {
-                                                                anchor: 'bottom',
-                                                                direction: 'row',
-                                                                translateY: 56,
-                                                                itemWidth: 60,
-                                                                itemHeight: 18,
+                                                                anchor: 'left',
+                                                                direction: 'column',
+                                                                translateX: -50,
+                                                                itemWidth: 20,
+                                                                itemHeight: 40,
                                                                 itemTextColor: '#999',
                                                                 symbolSize: 18,
                                                                 symbolShape: 'circle',
@@ -278,17 +300,21 @@ class FormDashboard extends React.Component {
                                 <div className="col-lg-3 col-sm-6">
                                     <div className="card">
                                         <div className="card-heading">
-                                            <div>
-                                                Valor de entrada
-                                            </div>
+                                            <h2>Valor de entrada</h2>
                                         </div>
                                         <div className="card-value">
-                                            <span>Min</span>
-                                            { this.state.minValorEntrada }
-                                            <br/><span>Max</span>
-                                            { this.state.maxValorEntrada }
-                                            <br/><span>Promedio</span>
-                                            { round(this.state.avgValorEntrada) }
+                                            <div className="row">
+                                                <span className="col-6">Min</span>
+                                                <p className="col-6">{ this.state.minValorEntrada }</p>
+                                            </div>
+                                            <div className="row">
+                                                <span className="col-6">Max</span>
+                                                <p className="col-6">{ this.state.maxValorEntrada }</p>
+                                            </div>
+                                            <div className="row">
+                                                <span className="col-6">Promedio</span>
+                                                <p className="col-6">{ round(this.state.avgValorEntrada) }</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -300,17 +326,19 @@ class FormDashboard extends React.Component {
                                         <div className="row">
                                             {/*// <!-- row to include all mini-charts -->*/}
                                             <div className="col-sm-4">
+                                                <div className="card-heading">
+                                                    <h2>Hora del evento</h2>
+                                                </div>
                                                 <div className="chart-container">
                                                     {/*// <!-- chart -->*/}
-                                                    <h3>Hora del evento</h3>
-                                                    <div style={{height: "300px"}}>
+                                                    <div>
                                                         <ResponsivePie
                                                             data={this.state.horaEvento}
                                                             margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
                                                             innerRadius={0.5}
                                                             padAngle={0.7}
                                                             cornerRadius={3}
-                                                            colors={{ scheme: 'category10' }}
+                                                            colors={{ scheme: 'paired' }}
                                                             borderWidth={1}
                                                             borderColor={{ from: 'color', modifiers: [ [ 'darker', 0.2 ] ] }}
                                                             enableRadialLabels={false}
@@ -344,17 +372,19 @@ class FormDashboard extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="col-sm-4">
+                                                <div className="card-heading">
+                                                    <h2>Es parte del FIAV?</h2>
+                                                </div>
                                                 <div className="chart-container">
                                                     {/*// <!-- chart -->*/}
-                                                    <h3>Es parte del FIAV?</h3>
-                                                    <div style={{height: "300px"}}>
+                                                    <div>
                                                         <ResponsivePie
                                                             data={this.state.esParteDelFiav}
                                                             margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
                                                             innerRadius={0.5}
                                                             padAngle={0.7}
                                                             cornerRadius={3}
-                                                            colors={{ scheme: 'category10' }}
+                                                            colors={{ scheme: 'paired' }}
                                                             borderWidth={1}
                                                             borderColor={{ from: 'color', modifiers: [ [ 'darker', 0.2 ] ] }}
                                                             enableRadialLabels={false}
@@ -388,17 +418,19 @@ class FormDashboard extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="col-sm-4">
+                                                <div className="card-heading">
+                                                    <h2>Categoría del evento</h2>
+                                                </div>
                                                 <div className="chart-container">
                                                     {/*// <!-- chart -->*/}
-                                                    <h3>Categoría del evento</h3>
-                                                    <div style={{height: "300px"}}>
+                                                    <div>
                                                         <ResponsivePie
                                                             data={this.state.categoriaEvento}
                                                             margin={{ top: 10, right: 55, bottom: 55, left: 55 }}
                                                             innerRadius={0.5}
                                                             padAngle={0.7}
                                                             cornerRadius={3}
-                                                            colors={{ scheme: 'category10' }}
+                                                            colors={{ scheme: 'paired' }}
                                                             borderWidth={1}
                                                             borderColor={{ from: 'color', modifiers: [ [ 'darker', 0.2 ] ] }}
                                                             enableRadialLabels={false}
