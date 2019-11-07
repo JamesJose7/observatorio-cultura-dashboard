@@ -39,8 +39,14 @@ class FormDashboard extends React.Component {
         const submissions = this.state.data
 
         // Dashboard values
+        let asistentesFiltered = []
         let avgAsistentes = 0
+        let minAsistentes
+        let maxAsistentes
+        let aforoEspacioFiltered = []
         let avgAforoEspacio = 0
+        let minAforoEspacio
+        let maxAforoEspacio
         let horaEventoFiltered = []
         let esParteFiavFiltered = []
         let categoriaEventoFiltered = []
@@ -49,15 +55,16 @@ class FormDashboard extends React.Component {
         let minValorEntrada
         let maxValorEntrada
         let avgValorEntrada
+
         submissions.forEach(submission => {
-            // AVG asistentes
+            // AVG asistentes and accumulate values
             avgAsistentes += parseInt(submission.numero_asistentes)
-            // AVG aforo espacio
+            asistentesFiltered.push(parseInt(submission.numero_asistentes))
+            // AVG aforo espacio and accumulate values
             avgAforoEspacio += parseInt(submission.aforo_del_espacio)
-            // AVG valor entrada
-            avgValorEntrada += parseInt(submission.costo)
+            aforoEspacioFiltered.push(parseInt(submission.aforo_del_espacio))
             // Accumulate Valor entrada
-            valorEntradaFiltered.push(submission.costo)
+            valorEntradaFiltered.push(parseInt(submission.costo))
             // Hora evento
             horaEventoFiltered.push(lodash.pick(submission, ['hora']))
             // Parte del FIAV
@@ -67,12 +74,16 @@ class FormDashboard extends React.Component {
             // Costo de entrada
             costoEntradaFiltered.push(lodash.pick(submission, ['tipo_entrada']))
         })
-        // Calculate avg asistentes
+        // Calculate asistentes values
         avgAsistentes /= submissions.length
-        // Calculate avg aforo
+        minAsistentes = Math.min(...asistentesFiltered)
+        maxAsistentes = Math.max(...asistentesFiltered)
+        // Calculate aforo values
         avgAforoEspacio /= submissions.length
+        minAforoEspacio = Math.min(...aforoEspacioFiltered)
+        maxAforoEspacio = Math.max(...aforoEspacioFiltered)
         // Calculate valor entrada values
-        valorEntradaFiltered = lodash.compact(valorEntradaFiltered)
+        valorEntradaFiltered = lodash.compact(valorEntradaFiltered) // Remove undefined values since it's an optional question
         avgValorEntrada = (valorEntradaFiltered.reduce(function(a, b) { return a + b; })) / valorEntradaFiltered.length;
         minValorEntrada = Math.min(...valorEntradaFiltered)
         maxValorEntrada = Math.max(...valorEntradaFiltered)
@@ -148,7 +159,11 @@ class FormDashboard extends React.Component {
         // setting state
         this.setState({
             avgAsistentes: avgAsistentes,
+            minAsistentes: minAsistentes,
+            maxAsistentes: maxAsistentes,
             avgAforoEspacio: avgAforoEspacio,
+            minAforoEspacio: minAforoEspacio,
+            maxAforoEspacio: maxAforoEspacio,
             horaEvento: dataHoraEvento,
             esParteDelFiav: dataEsParteFiav,
             categoriaEvento: dataCategoriaEvento,
@@ -206,11 +221,11 @@ class FormDashboard extends React.Component {
                                         <div className="card-value">
                                             <div className="row">
                                                 <span className="col-6">Min</span>
-                                                <p className="col-6">{ this.state.minValorEntrada }</p>
+                                                <p className="col-6">{ this.state.minAsistentes }</p>
                                             </div>
                                             <div className="row">
                                                 <span className="col-6">Max</span>
-                                                <p className="col-6">{ this.state.minValorEntrada }</p>
+                                                <p className="col-6">{ this.state.maxAsistentes }</p>
                                             </div>
                                             <div className="row">
                                                 <span className="col-6">Promedio</span>
@@ -224,17 +239,17 @@ class FormDashboard extends React.Component {
                                     <div className="card">
                                         <div className="card-heading">
                                             <h2>
-                                                Aforo de espacio
+                                                Aforo del espacio
                                             </h2>
                                         </div>
                                         <div className="card-value">
                                             <div className="row">
                                                 <span className="col-6">Min</span>
-                                                <p className="col-6">{ this.state.minValorEntrada }</p>
+                                                <p className="col-6">{ this.state.minAforoEspacio }</p>
                                             </div>
                                             <div className="row">
                                                 <span className="col-6">Max</span>
-                                                <p className="col-6">{ this.state.minValorEntrada }</p>
+                                                <p className="col-6">{ this.state.maxAforoEspacio }</p>
                                             </div>
                                             <div className="row">
                                                 <span className="col-6">Promedio</span>
