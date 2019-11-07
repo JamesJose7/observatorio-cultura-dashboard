@@ -363,7 +363,7 @@ class FormDashboard extends React.Component {
                                                     <div>
                                                         <ResponsivePie
                                                             data={this.state.horaEvento}
-                                                            margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
+                                                            margin={{ top: 10, right: 55, bottom: 55, left: 55 }}
                                                             innerRadius={0.5}
                                                             padAngle={0.7}
                                                             cornerRadius={3}
@@ -380,10 +380,11 @@ class FormDashboard extends React.Component {
                                                                 {
                                                                     anchor: 'bottom',
                                                                     direction: 'row',
-                                                                    translateY: 56,
+                                                                    translateY: 30,
                                                                     itemWidth: 75,
                                                                     itemHeight: 18,
                                                                     itemTextColor: '#999',
+                                                                    itemDirection: 'top-to-bottom',
                                                                     symbolSize: 18,
                                                                     symbolShape: 'circle',
                                                                     effects: [
@@ -409,7 +410,7 @@ class FormDashboard extends React.Component {
                                                     <div>
                                                         <ResponsivePie
                                                             data={this.state.esParteDelFiav}
-                                                            margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
+                                                            margin={{ top: 10, right: 55, bottom: 55, left: 55 }}
                                                             innerRadius={0.5}
                                                             padAngle={0.7}
                                                             cornerRadius={3}
@@ -426,10 +427,11 @@ class FormDashboard extends React.Component {
                                                                 {
                                                                     anchor: 'bottom',
                                                                     direction: 'row',
-                                                                    translateY: 56,
+                                                                    translateY: 30,
                                                                     itemWidth: 60,
                                                                     itemHeight: 18,
                                                                     itemTextColor: '#999',
+                                                                    itemDirection: 'top-to-bottom',
                                                                     symbolSize: 18,
                                                                     symbolShape: 'circle',
                                                                     effects: [
