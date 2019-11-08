@@ -201,92 +201,168 @@ class FormDashboard extends React.Component {
 
         return (
             <div>
-                <div>
-                    {/*Display a message if we encounter an error*/}
-                    {error ? <p>{error.message}</p> : null}
+                {/*Display a message if we encounter an error*/}
+                {error ? <p>{error.message}</p> : null}
 
-                    {/*// data check*/}
-                    {!isLoading ? (
-                        <div className="container-fluid">
+                {/*// data check*/}
+                {!isLoading ? (
+                    <div className="container-fluid">
 
-                            <div className="row" id="dashboard-header">
-                                <div className="col-8">
-                                    <h2>{this.props.formName}</h2>
-                                </div>
-                                <div className="col-4 text-right">
-                                    <a className="btn btn-link download-submissions" href={this.props.submissionsLink}>
-                                        Descargar datos
-                                        <i className="material-icons">
-                                            cloud_download
-                                        </i>
-                                    </a>
+                        <div className="row" id="dashboard-header">
+                            <div className="col-8">
+                                <h2>{this.props.formName}</h2>
+                            </div>
+                            <div className="col-4 text-right">
+                                <a className="btn btn-link download-submissions" href={this.props.submissionsLink}>
+                                    Descargar datos
+                                    <i className="material-icons">
+                                        cloud_download
+                                    </i>
+                                </a>
+                            </div>
+                        </div>
+
+                        {/*// <!-- kpi section -->*/}
+                        <div className="row">
+                            <div className="col-lg-3 col-sm-6">
+                                <div className="card">
+                                    <div className="card-heading">
+                                        <h2>
+                                            Asistentes
+                                        </h2>
+                                    </div>
+                                    <div className="card-value">
+                                        <div className="row">
+                                            <span className="col-6">Min</span>
+                                            <p className="col-6">{ this.state.minAsistentes }</p>
+                                        </div>
+                                        <div className="row">
+                                            <span className="col-6">Max</span>
+                                            <p className="col-6">{ this.state.maxAsistentes }</p>
+                                        </div>
+                                        <div className="row">
+                                            <span className="col-6">Promedio</span>
+                                            <p className="col-6">{ round(this.state.avgAsistentes) }</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/*// <!-- kpi section -->*/}
-                            <div className="row">
-                                <div className="col-lg-3 col-sm-6">
-                                    <div className="card">
-                                        <div className="card-heading">
-                                            <h2>
-                                                Asistentes
-                                            </h2>
+                            <div className="col-lg-3 col-sm-6">
+                                <div className="card">
+                                    <div className="card-heading">
+                                        <h2>
+                                            Aforo del espacio
+                                        </h2>
+                                    </div>
+                                    <div className="card-value">
+                                        <div className="row">
+                                            <span className="col-6">Min</span>
+                                            <p className="col-6">{ this.state.minAforoEspacio }</p>
                                         </div>
-                                        <div className="card-value">
-                                            <div className="row">
-                                                <span className="col-6">Min</span>
-                                                <p className="col-6">{ this.state.minAsistentes }</p>
-                                            </div>
-                                            <div className="row">
-                                                <span className="col-6">Max</span>
-                                                <p className="col-6">{ this.state.maxAsistentes }</p>
-                                            </div>
-                                            <div className="row">
-                                                <span className="col-6">Promedio</span>
-                                                <p className="col-6">{ round(this.state.avgAsistentes) }</p>
+                                        <div className="row">
+                                            <span className="col-6">Max</span>
+                                            <p className="col-6">{ this.state.maxAforoEspacio }</p>
+                                        </div>
+                                        <div className="row">
+                                            <span className="col-6">Promedio</span>
+                                            <p className="col-6">{ round(this.state.avgAforoEspacio) }</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="col-lg-3 col-sm-6">
+                                <div className="card">
+                                    <div className="card-heading">
+                                        <h2>
+                                            Tipo de entrada
+                                        </h2>
+                                    </div>
+                                    <div className="">
+                                        <div className="chart-container">
+                                            {/*// <!-- chart -->*/}
+                                            <div style={{height: "200px"}}>
+                                                <ResponsivePie
+                                                    data={this.state.costoEvento}
+                                                    margin={{ top: 30, right: 30, bottom: 30, left: 80 }}
+                                                    innerRadius={0.5}
+                                                    padAngle={0.7}
+                                                    cornerRadius={3}
+                                                    colors={{ scheme: 'paired' }}
+                                                    borderWidth={1}
+                                                    borderColor={{ from: 'color', modifiers: [ [ 'darker', 0.2 ] ] }}
+                                                    enableRadialLabels={false}
+                                                    slicesLabelsSkipAngle={10}
+                                                    slicesLabelsTextColor="#333333"
+                                                    animate={true}
+                                                    motionStiffness={90}
+                                                    motionDamping={15}
+                                                    legends={[
+                                                        {
+                                                            anchor: 'left',
+                                                            direction: 'column',
+                                                            translateX: -50,
+                                                            itemWidth: 20,
+                                                            itemHeight: 40,
+                                                            itemTextColor: '#999',
+                                                            symbolSize: 18,
+                                                            symbolShape: 'circle',
+                                                            effects: [
+                                                                {
+                                                                    on: 'hover',
+                                                                    style: {
+                                                                        itemTextColor: '#000'
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]}
+                                                />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div className="col-lg-3 col-sm-6">
-                                    <div className="card">
-                                        <div className="card-heading">
-                                            <h2>
-                                                Aforo del espacio
-                                            </h2>
+                            <div className="col-lg-3 col-sm-6">
+                                <div className="card">
+                                    <div className="card-heading">
+                                        <h2>Valor de entrada</h2>
+                                    </div>
+                                    <div className="card-value">
+                                        <div className="row">
+                                            <span className="col-6">Min</span>
+                                            <p className="col-6">{ this.state.minValorEntrada }</p>
                                         </div>
-                                        <div className="card-value">
-                                            <div className="row">
-                                                <span className="col-6">Min</span>
-                                                <p className="col-6">{ this.state.minAforoEspacio }</p>
-                                            </div>
-                                            <div className="row">
-                                                <span className="col-6">Max</span>
-                                                <p className="col-6">{ this.state.maxAforoEspacio }</p>
-                                            </div>
-                                            <div className="row">
-                                                <span className="col-6">Promedio</span>
-                                                <p className="col-6">{ round(this.state.avgAforoEspacio) }</p>
-                                            </div>
+                                        <div className="row">
+                                            <span className="col-6">Max</span>
+                                            <p className="col-6">{ this.state.maxValorEntrada }</p>
+                                        </div>
+                                        <div className="row">
+                                            <span className="col-6">Promedio</span>
+                                            <p className="col-6">{ round(this.state.avgValorEntrada) }</p>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
 
-                                <div className="col-lg-3 col-sm-6">
-                                    <div className="card">
-                                        <div className="card-heading">
-                                            <h2>
-                                                Tipo de entrada
-                                            </h2>
-                                        </div>
-                                        <div className="">
+                        <div className="row">
+                            <div className="col-12">
+                                <div className="card">
+                                    <div className="row">
+                                        {/*// <!-- row to include all mini-charts -->*/}
+                                        <div className="col-sm-4 card-right-border">
+                                            <div className="card-heading text-center">
+                                                <h2>Hora del evento</h2>
+                                            </div>
                                             <div className="chart-container">
                                                 {/*// <!-- chart -->*/}
-                                                <div style={{height: "200px"}}>
+                                                <div>
                                                     <ResponsivePie
-                                                        data={this.state.costoEvento}
-                                                        margin={{ top: 30, right: 30, bottom: 30, left: 80 }}
+                                                        data={this.state.horaEvento}
+                                                        margin={{ top: 10, right: 55, bottom: 55, left: 55 }}
                                                         innerRadius={0.5}
                                                         padAngle={0.7}
                                                         cornerRadius={3}
@@ -301,12 +377,107 @@ class FormDashboard extends React.Component {
                                                         motionDamping={15}
                                                         legends={[
                                                             {
-                                                                anchor: 'left',
-                                                                direction: 'column',
-                                                                translateX: -50,
-                                                                itemWidth: 20,
-                                                                itemHeight: 40,
+                                                                anchor: 'bottom',
+                                                                direction: 'row',
+                                                                translateY: 30,
+                                                                itemWidth: 75,
+                                                                itemHeight: 18,
                                                                 itemTextColor: '#999',
+                                                                itemDirection: 'top-to-bottom',
+                                                                symbolSize: 18,
+                                                                symbolShape: 'circle',
+                                                                effects: [
+                                                                    {
+                                                                        on: 'hover',
+                                                                        style: {
+                                                                            itemTextColor: '#000'
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-sm-4 card-right-border">
+                                            <div className="card-heading text-center">
+                                                <h2>Es parte del FIAV?</h2>
+                                            </div>
+                                            <div className="chart-container">
+                                                {/*// <!-- chart -->*/}
+                                                <div>
+                                                    <ResponsivePie
+                                                        data={this.state.esParteDelFiav}
+                                                        margin={{ top: 10, right: 55, bottom: 55, left: 55 }}
+                                                        innerRadius={0.5}
+                                                        padAngle={0.7}
+                                                        cornerRadius={3}
+                                                        colors={{ scheme: 'paired' }}
+                                                        borderWidth={1}
+                                                        borderColor={{ from: 'color', modifiers: [ [ 'darker', 0.2 ] ] }}
+                                                        enableRadialLabels={false}
+                                                        slicesLabelsSkipAngle={10}
+                                                        slicesLabelsTextColor="#333333"
+                                                        animate={true}
+                                                        motionStiffness={90}
+                                                        motionDamping={15}
+                                                        legends={[
+                                                            {
+                                                                anchor: 'bottom',
+                                                                direction: 'row',
+                                                                translateY: 30,
+                                                                itemWidth: 60,
+                                                                itemHeight: 18,
+                                                                itemTextColor: '#999',
+                                                                itemDirection: 'top-to-bottom',
+                                                                symbolSize: 18,
+                                                                symbolShape: 'circle',
+                                                                effects: [
+                                                                    {
+                                                                        on: 'hover',
+                                                                        style: {
+                                                                            itemTextColor: '#000'
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-sm-4">
+                                            <div className="card-heading text-center">
+                                                <h2>Categoría del evento</h2>
+                                            </div>
+                                            <div className="chart-container">
+                                                {/*// <!-- chart -->*/}
+                                                <div>
+                                                    <ResponsivePie
+                                                        data={this.state.categoriaEvento}
+                                                        margin={{ top: 10, right: 55, bottom: 55, left: 55 }}
+                                                        innerRadius={0.5}
+                                                        padAngle={0.7}
+                                                        cornerRadius={3}
+                                                        colors={{ scheme: 'paired' }}
+                                                        borderWidth={1}
+                                                        borderColor={{ from: 'color', modifiers: [ [ 'darker', 0.2 ] ] }}
+                                                        enableRadialLabels={false}
+                                                        slicesLabelsSkipAngle={10}
+                                                        slicesLabelsTextColor="#333333"
+                                                        animate={true}
+                                                        motionStiffness={90}
+                                                        motionDamping={15}
+                                                        legends={[
+                                                            {
+                                                                anchor: 'bottom',
+                                                                direction: 'row',
+                                                                translateY: 30,
+                                                                itemWidth: 92,
+                                                                itemHeight: 18,
+                                                                itemTextColor: '#999',
+                                                                itemDirection: 'top-to-bottom',
                                                                 symbolSize: 18,
                                                                 symbolShape: 'circle',
                                                                 effects: [
@@ -325,194 +496,21 @@ class FormDashboard extends React.Component {
                                         </div>
                                     </div>
                                 </div>
-
-                                <div className="col-lg-3 col-sm-6">
-                                    <div className="card">
-                                        <div className="card-heading">
-                                            <h2>Valor de entrada</h2>
-                                        </div>
-                                        <div className="card-value">
-                                            <div className="row">
-                                                <span className="col-6">Min</span>
-                                                <p className="col-6">{ this.state.minValorEntrada }</p>
-                                            </div>
-                                            <div className="row">
-                                                <span className="col-6">Max</span>
-                                                <p className="col-6">{ this.state.maxValorEntrada }</p>
-                                            </div>
-                                            <div className="row">
-                                                <span className="col-6">Promedio</span>
-                                                <p className="col-6">{ round(this.state.avgValorEntrada) }</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="row">
-                                <div className="col-12">
-                                    <div className="card">
-                                        <div className="row">
-                                            {/*// <!-- row to include all mini-charts -->*/}
-                                            <div className="col-sm-4 card-right-border">
-                                                <div className="card-heading text-center">
-                                                    <h2>Hora del evento</h2>
-                                                </div>
-                                                <div className="chart-container">
-                                                    {/*// <!-- chart -->*/}
-                                                    <div>
-                                                        <ResponsivePie
-                                                            data={this.state.horaEvento}
-                                                            margin={{ top: 10, right: 55, bottom: 55, left: 55 }}
-                                                            innerRadius={0.5}
-                                                            padAngle={0.7}
-                                                            cornerRadius={3}
-                                                            colors={{ scheme: 'paired' }}
-                                                            borderWidth={1}
-                                                            borderColor={{ from: 'color', modifiers: [ [ 'darker', 0.2 ] ] }}
-                                                            enableRadialLabels={false}
-                                                            slicesLabelsSkipAngle={10}
-                                                            slicesLabelsTextColor="#333333"
-                                                            animate={true}
-                                                            motionStiffness={90}
-                                                            motionDamping={15}
-                                                            legends={[
-                                                                {
-                                                                    anchor: 'bottom',
-                                                                    direction: 'row',
-                                                                    translateY: 30,
-                                                                    itemWidth: 75,
-                                                                    itemHeight: 18,
-                                                                    itemTextColor: '#999',
-                                                                    itemDirection: 'top-to-bottom',
-                                                                    symbolSize: 18,
-                                                                    symbolShape: 'circle',
-                                                                    effects: [
-                                                                        {
-                                                                            on: 'hover',
-                                                                            style: {
-                                                                                itemTextColor: '#000'
-                                                                            }
-                                                                        }
-                                                                    ]
-                                                                }
-                                                            ]}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="col-sm-4 card-right-border">
-                                                <div className="card-heading text-center">
-                                                    <h2>Es parte del FIAV?</h2>
-                                                </div>
-                                                <div className="chart-container">
-                                                    {/*// <!-- chart -->*/}
-                                                    <div>
-                                                        <ResponsivePie
-                                                            data={this.state.esParteDelFiav}
-                                                            margin={{ top: 10, right: 55, bottom: 55, left: 55 }}
-                                                            innerRadius={0.5}
-                                                            padAngle={0.7}
-                                                            cornerRadius={3}
-                                                            colors={{ scheme: 'paired' }}
-                                                            borderWidth={1}
-                                                            borderColor={{ from: 'color', modifiers: [ [ 'darker', 0.2 ] ] }}
-                                                            enableRadialLabels={false}
-                                                            slicesLabelsSkipAngle={10}
-                                                            slicesLabelsTextColor="#333333"
-                                                            animate={true}
-                                                            motionStiffness={90}
-                                                            motionDamping={15}
-                                                            legends={[
-                                                                {
-                                                                    anchor: 'bottom',
-                                                                    direction: 'row',
-                                                                    translateY: 30,
-                                                                    itemWidth: 60,
-                                                                    itemHeight: 18,
-                                                                    itemTextColor: '#999',
-                                                                    itemDirection: 'top-to-bottom',
-                                                                    symbolSize: 18,
-                                                                    symbolShape: 'circle',
-                                                                    effects: [
-                                                                        {
-                                                                            on: 'hover',
-                                                                            style: {
-                                                                                itemTextColor: '#000'
-                                                                            }
-                                                                        }
-                                                                    ]
-                                                                }
-                                                            ]}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="col-sm-4">
-                                                <div className="card-heading text-center">
-                                                    <h2>Categoría del evento</h2>
-                                                </div>
-                                                <div className="chart-container">
-                                                    {/*// <!-- chart -->*/}
-                                                    <div>
-                                                        <ResponsivePie
-                                                            data={this.state.categoriaEvento}
-                                                            margin={{ top: 10, right: 55, bottom: 55, left: 55 }}
-                                                            innerRadius={0.5}
-                                                            padAngle={0.7}
-                                                            cornerRadius={3}
-                                                            colors={{ scheme: 'paired' }}
-                                                            borderWidth={1}
-                                                            borderColor={{ from: 'color', modifiers: [ [ 'darker', 0.2 ] ] }}
-                                                            enableRadialLabels={false}
-                                                            slicesLabelsSkipAngle={10}
-                                                            slicesLabelsTextColor="#333333"
-                                                            animate={true}
-                                                            motionStiffness={90}
-                                                            motionDamping={15}
-                                                            legends={[
-                                                                {
-                                                                    anchor: 'bottom',
-                                                                    direction: 'row',
-                                                                    translateY: 30,
-                                                                    itemWidth: 92,
-                                                                    itemHeight: 18,
-                                                                    itemTextColor: '#999',
-                                                                    itemDirection: 'top-to-bottom',
-                                                                    symbolSize: 18,
-                                                                    symbolShape: 'circle',
-                                                                    effects: [
-                                                                        {
-                                                                            on: 'hover',
-                                                                            style: {
-                                                                                itemTextColor: '#000'
-                                                                            }
-                                                                        }
-                                                                    ]
-                                                                }
-                                                            ]}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        // If there is a delay in data, let's let the user know it's loading
-                    ) : (
-                        <div className="placeholder container-fluid">
-                            <div className="row align-items-center" style={{minHeight: "80vh"}}>
-                                <div className="col-6 mx-auto">
-                                    <h1 className="text-center">Loading...</h1>
-                                </div>
                             </div>
                         </div>
-                    )}
-                </div>
+
+                    </div>
+
+                    // If there is a delay in data, let's let the user know it's loading
+                ) : (
+                    <div className="placeholder container-fluid">
+                        <div className="row align-items-center" style={{minHeight: "80vh"}}>
+                            <div className="col-6 mx-auto">
+                                <h1 className="text-center">Loading...</h1>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         )
     }
