@@ -4,6 +4,7 @@ import config from '../../config'
 import koboApi from '../../koboApi'
 import DataTable from 'react-data-table-component';
 import lodash from 'lodash'
+import {Dropdown, Button, ButtonGroup} from "react-bootstrap";
 
 class SummaryDashboard extends React.Component {
     state = {
@@ -109,14 +110,53 @@ class SummaryDashboard extends React.Component {
 
                     <div className="container-fluid">
                         <div className="row">
+                            <div className="col-lg-9">
+                                <div className="card">
+                                    <div className="card-heading">
+                                        <h2>Summary graphs here</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-lg-3">
+                                <div className="card">
+                                    <div className="card-heading">
+                                        <h2>Acciones</h2>
+                                    </div>
+                                    <div className="form-actions">
+                                        <div>
+                                            <p>Form selector here</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="row">
                             <div className="col-12">
                                 <div className="card">
+                                    <div className="row">
+                                        <h2 className="col-8">Datos de formulario</h2>
+                                        <div className="col-4">
+                                            <Dropdown as={ButtonGroup} className="float-right">
+                                                <Button disabled={true} variant="outline-primary">
+                                                    Descargar
+                                                </Button>
+
+                                                <Dropdown.Toggle split variant="primary" id="dropdown-split-basic"/>
+
+                                                <Dropdown.Menu drop={'left'}>
+                                                    <Dropdown.Item href={koboApi.urls().downloadSubmissions({id: this.props.formId, format: 'csv'})}>CSV</Dropdown.Item>
+                                                    <Dropdown.Item href={koboApi.urls().downloadSubmissions({id: this.props.formId, format: 'xlsx'})}>XLSX</Dropdown.Item>
+                                                </Dropdown.Menu>
+                                            </Dropdown>
+                                        </div>
+                                    </div>
                                     <DataTable
                                         title={this.props.formName}
                                         columns={columns}
                                         data={data}
+                                        selectableRows={true}
                                     />
-
                                 </div>
                             </div>
                         </div>
