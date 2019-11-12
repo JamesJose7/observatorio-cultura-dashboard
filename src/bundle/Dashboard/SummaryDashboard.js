@@ -6,6 +6,7 @@ import DataTable from 'react-data-table-component';
 import lodash from 'lodash'
 import {Dropdown, Button, ButtonGroup, Modal} from "react-bootstrap";
 import axios from 'axios'
+import $ from 'jquery'
 
 const CancelToken = axios.CancelToken;
 let cancelMeta;
@@ -75,6 +76,10 @@ class SummaryDashboard extends React.Component {
     }
 
     updateDashboard = arg => {
+        // Hide all tables and show only the currently selected one
+        $('.form-table-container').css("display", "none")
+        $('#' + this.state.currentForm.id).css("display", "block")
+
         // json response data
         const submissions = this.state.data
 
@@ -89,6 +94,7 @@ class SummaryDashboard extends React.Component {
             isLoading: false
         })
     }
+
     cacheForm() {
         let s = this.state;
         // Add new form to cache
@@ -101,7 +107,7 @@ class SummaryDashboard extends React.Component {
         this.setState(prevState => ({
             cachedForms: [...prevState.cachedForms, newForm],
             isLoading: false
-        }))
+        }), () => this.updateDashboard()) // Update dashboard once finished
     }
 
     loadForm() {
@@ -109,10 +115,9 @@ class SummaryDashboard extends React.Component {
         if (!this.getCachedForm(this.state.currentForm)) { // If not, retrieve it and cache it
             this.fetchFormMetadata()
         } else{
-            console.log(this.getCachedForm(this.state.currentForm))
             this.setState({
                 isLoading: false
-            })
+            }, () => this.updateDashboard()) // Update dashboard once finished
         }
     }
 
@@ -192,15 +197,17 @@ class SummaryDashboard extends React.Component {
                                                 <Dropdown.Toggle split variant="primary" id="dropdown-split-basic"/>
 
                                                 <Dropdown.Menu drop={'left'}>
-                                                    <Dropdown.Item href={koboApi.urls().downloadSubmissions({id: this.props.formId, format: 'csv'})}>CSV</Dropdown.Item>
-                                                    <Dropdown.Item href={koboApi.urls().downloadSubmissions({id: this.props.formId, format: 'xlsx'})}>XLSX</Dropdown.Item>
+                                                    <Dropdown.Item href={koboApi.urls().downloadSubmissions({id: currentForm.id, format: 'csv'})}>CSV</Dropdown.Item>
+                                                    <Dropdown.Item href={koboApi.urls().downloadSubmissions({id: currentForm.id, format: 'xlsx'})}>XLSX</Dropdown.Item>
                                                 </Dropdown.Menu>
                                             </Dropdown>
                                         </div>
                                     </div>
                                     {cachedForms.map(
                                         form => (
-                                            <Table key={form.id} name={form.name} columns={form.columns} data={form.data}/>
+                                            <div id={form.id} className="form-table-container">
+                                                <Table key={form.id} name={form.name} columns={form.columns} data={form.data}/>
+                                            </div>
                                         )
                                     )}
                                 </div>
@@ -248,6 +255,7 @@ class SummaryDashboard extends React.Component {
 
 function Table(props) {
     return <DataTable
+        keyField={props.id}
         title={props.name}
         columns={props.columns}
         data={props.data}
