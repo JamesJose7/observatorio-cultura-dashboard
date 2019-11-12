@@ -1,22 +1,39 @@
-import React from 'react'
+import React, {Component, useState} from 'react'
 import '../../App.css'
 import config from '../../config'
 import koboApi from '../../koboApi'
 import DataTable from 'react-data-table-component';
 import lodash from 'lodash'
-import {Dropdown, Button, ButtonGroup} from "react-bootstrap";
+import {Dropdown, Button, ButtonGroup, Modal} from "react-bootstrap";
+import axios from 'axios'
+
+const CancelToken = axios.CancelToken;
+let cancelMeta;
+const options = {
+    headers: {
+        'Authorization': config.koboToken,
+        'X-Requested-With': 'application/json'
+    },
+    cancelToken: new CancelToken(function executor(c) {
+        // An executor function receives a cancel function as a parameter
+        cancelMeta = c;
+    })
+}
 
 class SummaryDashboard extends React.Component {
     state = {
         isLoading: true,
         data: [],
         columns: [],
-        error: null
+        error: null,
+        currentForm: this.props.forms[0], // select first form by default
+        showFormSelector: false,
+        cachedForms: []
     }
 
     fetchFormMetadata() {
         // Get form metadata url
-        let url = `${config.corsProxy}${koboApi.urls().formMetadata(this.props.formId)}`
+        let url = `${config.corsProxy}${koboApi.urls().formMetadata(this.state.currentForm.id)}`
 
         function formatColumns(data) {
             let columns = []
@@ -34,49 +51,30 @@ class SummaryDashboard extends React.Component {
             return columns
         }
 
-        fetch(url, {
-            headers: new Headers({
-                'Authorization': config.koboToken,
-                'X-Requested-With': 'application/json'
-            }),
-        })
-        // get the API response and receive data in JSON format
-            .then(response => response.json())
-            // Update data state
+        axios.get(url, options)
+            .then((response) => response.data)
+            .then(data => formatColumns(data)) // Get only the columns from the metadata
             .then(data =>
                 this.setState({
-                    columns: formatColumns(data),
-                    isLoading: false,
-                })
-            )
-            // Catch any errors we hit and update the app
+                    columns: data,
+                }, () => this.fetchFormData())) // Fetch form data once the state has successfully changed
             .catch(error => this.setState({error, isLoading: false}));
     }
 
     fetchFormData() {
         // Get form submissions url
-        let url = `${config.corsProxy}${koboApi.urls().formSubmissions(this.props.formId)}`
+        let url = `${config.corsProxy}${koboApi.urls().formSubmissions(this.state.currentForm.id)}`
 
-        fetch(url, {
-            headers: new Headers({
-                'Authorization': config.koboToken,
-                'X-Requested-With': 'application/json'
-            }),
-        })
-        // get the API response and receive data in JSON format
-            .then(response => response.json())
-            // Update data state
+        axios.get(url, options)
+            .then((response) => response.data.results)
             .then(data =>
                 this.setState({
-                    data: data.results,
-                    isLoading: false,
-                }, () => this.getData())
-            )
-            // Catch any errors we hit and update the app
+                    data: data,
+                }, () => this.cacheForm()))// Cache form once the state has successfully changed
             .catch(error => this.setState({error, isLoading: false}));
     }
 
-    getData = arg => {
+    updateDashboard = arg => {
         // json response data
         const submissions = this.state.data
 
@@ -88,17 +86,64 @@ class SummaryDashboard extends React.Component {
 
         // setting state
         this.setState({
-
+            isLoading: false
         })
+    }
+    cacheForm() {
+        let s = this.state;
+        // Add new form to cache
+        let newForm = {
+            id: s.currentForm.id,
+            name: s.currentForm.name,
+            columns: s.columns,
+            data: s.data
+        }
+        this.setState(prevState => ({
+            cachedForms: [...prevState.cachedForms, newForm],
+            isLoading: false
+        }))
+    }
+
+    loadForm() {
+        // Check if it's cached already
+        if (!this.getCachedForm(this.state.currentForm)) { // If not, retrieve it and cache it
+            this.fetchFormMetadata()
+        } else{
+            console.log(this.getCachedForm(this.state.currentForm))
+            this.setState({
+                isLoading: false
+            })
+        }
+    }
+
+    getCachedForm(form) {
+        for (let value of this.state.cachedForms)
+            if (value.id === form.id)
+                return value
+        return false
     }
 
     componentDidMount() {
-        this.fetchFormMetadata()
-        this.fetchFormData()
+        this.loadForm()
     }
 
+    componentWillUnmount() {
+        cancelMeta()
+    }
+
+    changeSelectedForm(form) {
+        // Close modal
+        this.handleCloseFormSelector.apply()
+        // Change state to new selected form
+        this.setState({currentForm: form, isLoading: true},
+            () => this.loadForm())// Reload data once state is changed
+    }
+
+    handleShowFormSelector = () => this.setState({showFormSelector: true})
+    handleCloseFormSelector = () => this.setState({showFormSelector: false})
+
     render() {
-        const {isLoading, columns, data, error} = this.state
+        const {isLoading, error, currentForm, cachedForms} = this.state
 
         return (
             <div>
@@ -107,13 +152,15 @@ class SummaryDashboard extends React.Component {
 
                 {/*// data check*/}
                 {!isLoading ? (
-
                     <div className="container-fluid">
                         <div className="row">
                             <div className="col-lg-9">
                                 <div className="card">
                                     <div className="card-heading">
                                         <h2>Summary graphs here</h2>
+                                        <Button variant="primary" onClick={this.handleShowFormSelector}>
+                                            Launch demo modal
+                                        </Button>
                                     </div>
                                 </div>
                             </div>
@@ -135,7 +182,7 @@ class SummaryDashboard extends React.Component {
                             <div className="col-12">
                                 <div className="card">
                                     <div className="row">
-                                        <h2 className="col-8">Datos de formulario</h2>
+                                        <h2 className="col-8">Datos del formulario</h2>
                                         <div className="col-4">
                                             <Dropdown as={ButtonGroup} className="float-right">
                                                 <Button disabled={true} variant="outline-primary">
@@ -151,15 +198,36 @@ class SummaryDashboard extends React.Component {
                                             </Dropdown>
                                         </div>
                                     </div>
-                                    <DataTable
-                                        title={this.props.formName}
-                                        columns={columns}
-                                        data={data}
-                                        selectableRows={true}
-                                    />
+                                    {cachedForms.map(
+                                        form => (
+                                            <Table key={form.id} name={form.name} columns={form.columns} data={form.data}/>
+                                        )
+                                    )}
                                 </div>
                             </div>
                         </div>
+
+                        <Modal
+                            show={this.state.showFormSelector}
+                            onHide={this.handleCloseFormSelector}
+                            size="lg"
+                            aria-labelledby="contained-modal-title-vcenter"
+                            centered
+                        >
+                            <Modal.Header closeButton>
+                                <Modal.Title>Seleccionar formulario</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                <ButtonGroup vertical>
+                                    {this.props.forms.map(
+                                        form => (
+                                            <Button variant="link" className="text-left" key={form.id}
+                                                    onClick={() => this.changeSelectedForm(form)}>{form.name}</Button>
+                                        )
+                                    )}
+                                </ButtonGroup>
+                            </Modal.Body>
+                        </Modal>
                     </div>
 
 
@@ -176,6 +244,15 @@ class SummaryDashboard extends React.Component {
             </div>
         )
     }
+}
+
+function Table(props) {
+    return <DataTable
+        title={props.name}
+        columns={props.columns}
+        data={props.data}
+        selectableRows={true}
+    />;
 }
 
 export default SummaryDashboard
