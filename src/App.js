@@ -5,7 +5,7 @@ import FormDashboard from "./bundle/Dashboard/FormDashboard";
 import SummaryDashboard from "./bundle/Dashboard/SummaryDashboard";
 
 const availableForms = [
-    {
+    /*{
         name: "Escenarios publicos",
         id: "abSepFikh7Kh6E6dwrbxAq"
     },
@@ -16,6 +16,18 @@ const availableForms = [
     {
         name: "Escenarios privados",
         id: "anEhhXYWggZGvJJ4PtpT5Z"
+    },*/
+    {
+        name: "Capacitadores",
+        id: "axwZy8ApV3CGjt6EpFguHA"
+    },
+    {
+        name: "Productores",
+        id: "aZgJbmtwVSLQjAgbs3dNuP"
+    },
+    {
+        name: "Artistas",
+        id: "ap4PmjwkjyF5M7tYEHAors"
     }
 ]
 
@@ -27,8 +39,6 @@ function App() {
 
             <SummaryDashboard
                 forms={availableForms}
-                formId={'abSepFikh7Kh6E6dwrbxAq'}
-                formName={'Test form'}
             />
 
             {/*<FormDashboard

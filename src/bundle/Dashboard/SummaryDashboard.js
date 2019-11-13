@@ -26,6 +26,7 @@ class SummaryDashboard extends React.Component {
         isLoading: true,
         data: [],
         columns: [],
+        choicesLabels: {},
         error: null,
         currentForm: this.props.forms[0], // select first form by default
         showFormSelector: false,
@@ -36,8 +37,10 @@ class SummaryDashboard extends React.Component {
         // Get form metadata url
         let url = `${config.corsProxy}${koboApi.urls().formMetadata(this.state.currentForm.id)}`
 
-        function formatColumns(data) {
+        function formatColumnsAndChoices(data) {
             let columns = []
+            let choicesLabels = {}
+            // Get column names and format them according to data labels
             data.content.survey.forEach(col => {
                 if (col.label) {
                     if (!(col.label[0].length === 0 || !col.label[0].trim())) { // Check if label is empty
@@ -49,25 +52,54 @@ class SummaryDashboard extends React.Component {
                     }
                 }
             })
-            return columns
+            data.content.choices.forEach(choice => {
+                if (choice.label)
+                    if (!(choice.label[0].length === 0 || !choice.label[0].trim())) // Check if label is empty
+                        choicesLabels[choice.name] = choice.label[0]
+            })
+            // Get array of label choices with their id values to replace them when fetching data
+            return {
+                columns: columns,
+                choices: choicesLabels
+            }
         }
 
         axios.get(url, options)
             .then((response) => response.data)
-            .then(data => formatColumns(data)) // Get only the columns from the metadata
+            .then(data => formatColumnsAndChoices(data)) // Get only the columns from the metadata
             .then(data =>
                 this.setState({
-                    columns: data,
+                    columns: data.columns,
+                    choicesLabels: data.choices
                 }, () => this.fetchFormData())) // Fetch form data once the state has successfully changed
             .catch(error => this.setState({error, isLoading: false}));
     }
 
     fetchFormData() {
+        console.log(this.state.choicesLabels)
+
         // Get form submissions url
         let url = `${config.corsProxy}${koboApi.urls().formSubmissions(this.state.currentForm.id)}`
 
+        function cleanResponses(data, choicesLabels) {
+            // Change every value from their ID into their actual label
+            data.forEach(response => {
+                for (let key in response)
+                    if (response.hasOwnProperty(key)) {
+                        let val = response[key];
+                        if (val)
+                            if (choicesLabels[val]) // If the label is found, replace it with it's value
+                                response[key] = choicesLabels[val]
+                    }
+
+            })
+
+            return data
+        }
+
         axios.get(url, options)
             .then((response) => response.data.results)
+            .then(data => cleanResponses(data, this.state.choicesLabels))
             .then(data =>
                 this.setState({
                     data: data,
@@ -205,8 +237,8 @@ class SummaryDashboard extends React.Component {
                                     </div>
                                     {cachedForms.map(
                                         form => (
-                                            <div id={form.id} className="form-table-container">
-                                                <Table key={form.id} name={form.name} columns={form.columns} data={form.data}/>
+                                            <div id={form.id} key={form.id} className="form-table-container">
+                                                <Table name={form.name} columns={form.columns} data={form.data}/>
                                             </div>
                                         )
                                     )}
