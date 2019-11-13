@@ -76,8 +76,6 @@ class SummaryDashboard extends React.Component {
     }
 
     fetchFormData() {
-        console.log(this.state.choicesLabels)
-
         // Get form submissions url
         let url = `${config.corsProxy}${koboApi.urls().formSubmissions(this.state.currentForm.id)}`
 
@@ -172,8 +170,7 @@ class SummaryDashboard extends React.Component {
         // Close modal
         this.handleCloseFormSelector.apply()
         // Change state to new selected form
-        this.setState({currentForm: form, isLoading: true},
-            () => this.loadForm())// Reload data once state is changed
+        this.setState({currentForm: form, isLoading: true}, () => this.loadForm())// Reload data once state is changed
     }
 
     handleShowFormSelector = () => this.setState({showFormSelector: true})
@@ -181,6 +178,8 @@ class SummaryDashboard extends React.Component {
 
     render() {
         const {isLoading, error, currentForm, cachedForms} = this.state
+
+        let currentFormData = this.getCachedForm(currentForm)
 
         return (
             <div>
@@ -195,9 +194,9 @@ class SummaryDashboard extends React.Component {
                                 <div className="card">
                                     <div className="card-heading">
                                         <h2>Summary graphs here</h2>
-                                        <Button variant="primary" onClick={this.handleShowFormSelector}>
-                                            Launch demo modal
-                                        </Button>
+                                    </div>
+                                    <div className="card-value form-stats">
+                                        {currentFormData.data.length} respuestas totales
                                     </div>
                                 </div>
                             </div>
@@ -207,9 +206,10 @@ class SummaryDashboard extends React.Component {
                                         <h2>Acciones</h2>
                                     </div>
                                     <div className="form-actions">
-                                        <div>
-                                            <p>Form selector here</p>
-                                        </div>
+                                        <Button variant="outline-primary" onClick={this.handleShowFormSelector}
+                                                className="w-100">
+                                            Seleccionar Formulario
+                                        </Button>
                                     </div>
                                 </div>
                             </div>
