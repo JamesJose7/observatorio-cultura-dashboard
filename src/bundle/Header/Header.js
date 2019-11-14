@@ -9,11 +9,11 @@ class Header extends React.Component {
             <header>
                 <Nav className="navbar navbar-expand-lg is-white is-dark-text container-fluid">
                     <div className="navbar-brand h1 mb-0 text-large font-medium">
-                        UTPL - Observatorio Cultural
+                        UTPL - Visualizador de Formularios
                     </div>
                     <div className="navbar-nav ml-auto">
                         <div className="form-detail-section">
-                            <span className="pr-2">Form 1</span>
+                            <span className="pr-2"></span>
                         </div>
                     </div>
                 </Nav>

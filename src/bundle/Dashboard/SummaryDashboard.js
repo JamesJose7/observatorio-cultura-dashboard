@@ -219,35 +219,59 @@ class SummaryDashboard extends React.Component {
                 {/*// data check*/}
                 {!isLoading ? (
                     <div className="container-fluid summary-dashboard">
+
+                        <div id="dashboard-header">
+                            <div className="row">
+                                <div className="col-lg-7">
+                                    <h1>{currentFormData.name}</h1>
+                                </div>
+                                <div className="col-lg-5">
+                                        <div className="form-actions">
+                                            <Button variant="info" onClick={this.handleShowFormSelector}
+                                                    className="menu-option float-right">
+                                                Seleccionar Formulario
+                                                <i className="material-icons">
+                                                    menu
+                                                </i>
+                                            </Button>
+
+                                            <Button variant="info"
+                                                    href={currentFormData.formLink}
+                                                    target="_blank"
+                                                    className="menu-option float-right">
+                                                Abrir formulario
+                                                <i className="material-icons">
+                                                    open_in_new
+                                                </i>
+                                            </Button>
+                                        </div>
+
+                                </div>
+                            </div>
+                        </div>
                         <div className="row">
                             <div className="col-lg-3">
                                 <div className="card">
                                     <div className="card-heading">
-                                        <h2>Opciones</h2>
+                                        <h2>Resumen</h2>
                                     </div>
-                                    <div className="form-actions">
-                                        <Button variant="outline-primary" onClick={this.handleShowFormSelector}
-                                                className="w-100 mt-3">
-                                            Seleccionar Formulario
-                                        </Button>
-
-                                        <Button variant="outline-primary"
-                                                href={currentFormData.formLink}
-                                                target="_blank"
-                                                className="w-100 mt-3">
-                                            Abrir formulario
-                                        </Button>
+                                    <div className="form-summary-data parallel-card-body">
+                                        <span>Total de respuestas</span>
+                                        <p>{ currentFormData.data.length }</p>
+                                        <span>Respuestas por día</span>
+                                        <p>0</p>
+                                        <span>Última respuesta</span>
+                                        <p>0</p>
                                     </div>
                                 </div>
                             </div>
                             <div className="col-lg-9">
                                 <div className="card">
                                     <div className="card-heading">
-                                        <h2>Respuestas de: {currentFormData.name}</h2>
+                                        <h2>Respuestas por fecha</h2>
                                     </div>
-                                    <div className="chart-container">
-                                        <div style={{height: "400px"}} className="mb-3">
-                                            <ResponsiveBar
+                                    <div className="chart-container parallel-card-body">
+                                        <ResponsiveBar
                                                 data={this.state.dateGraphData}
                                                 keys={[ 'respuestas' ]}
                                                 indexBy="fecha"
@@ -332,11 +356,10 @@ class SummaryDashboard extends React.Component {
                                                 motionStiffness={90}
                                                 motionDamping={15}
                                             />
-                                        </div>
                                     </div>
-                                    <div className="card-value form-stats">
+                                    {/*<div className="card-value form-stats">
                                         Total de respuestas: {currentFormData.data.length}
-                                    </div>
+                                    </div>*/}
                                 </div>
                             </div>
                         </div>
@@ -344,7 +367,7 @@ class SummaryDashboard extends React.Component {
                         <div className="row">
                             <div className="col-12">
                                 <div className="card">
-                                    <div className="row">
+                                    <div className="row mb-4">
                                         <h2 className="col-8">Datos del formulario</h2>
                                         <div className="col-4">
                                             <Dropdown as={ButtonGroup} className="float-right">
@@ -401,9 +424,160 @@ class SummaryDashboard extends React.Component {
                     <div className="placeholder container-fluid summary-dashboard">
                         <div className="row align-items-center" style={{minHeight: "80vh"}}>
                             <div className="col-6 mx-auto">
-                                <h1 className="text-center">Loading...</h1>
+                                <h1 className="text-center">Cargando...</h1>
                             </div>
                         </div>
+
+                        {/*<div className="row">*/}
+                        {/*    <div className="col-lg-3">*/}
+                        {/*        <div className="card">*/}
+                        {/*            <div className="card-heading">*/}
+                        {/*                <h2>Opciones</h2>*/}
+                        {/*            </div>*/}
+                        {/*            <div className="form-actions">*/}
+                        {/*                <Button variant="outline-primary"*/}
+                        {/*                        className="w-100 mt-3">*/}
+                        {/*                    Seleccionar Formulario*/}
+                        {/*                </Button>*/}
+
+                        {/*                <Button variant="outline-primary"*/}
+                        {/*                        className="w-100 mt-3">*/}
+                        {/*                    Abrir formulario*/}
+                        {/*                </Button>*/}
+                        {/*            </div>*/}
+                        {/*        </div>*/}
+                        {/*    </div>*/}
+                        {/*    <div className="col-lg-9">*/}
+                        {/*        <div className="card">*/}
+                        {/*            <div className="card-heading">*/}
+                        {/*                <h2>Respuestas de: _</h2>*/}
+                        {/*            </div>*/}
+                        {/*            <div className="chart-container">*/}
+                        {/*                <div style={{height: "400px"}} className="mb-3">*/}
+                        {/*                    <ResponsiveBar*/}
+                        {/*                        data={this.state.dateGraphData}*/}
+                        {/*                        keys={[ 'respuestas' ]}*/}
+                        {/*                        indexBy="fecha"*/}
+                        {/*                        margin={{ top: 50, right: 130, bottom: 50, left: 60 }}*/}
+                        {/*                        padding={0.3}*/}
+                        {/*                        colors={{ scheme: 'category10' }}*/}
+                        {/*                        defs={[*/}
+                        {/*                            {*/}
+                        {/*                                id: 'dots',*/}
+                        {/*                                type: 'patternDots',*/}
+                        {/*                                background: 'inherit',*/}
+                        {/*                                color: '#3584bb',*/}
+                        {/*                                size: 4,*/}
+                        {/*                                padding: 1,*/}
+                        {/*                                stagger: true*/}
+                        {/*                            },*/}
+                        {/*                            {*/}
+                        {/*                                id: 'lines',*/}
+                        {/*                                type: 'patternLines',*/}
+                        {/*                                background: 'inherit',*/}
+                        {/*                                color: '#3584bb',*/}
+                        {/*                                rotation: -45,*/}
+                        {/*                                lineWidth: 6,*/}
+                        {/*                                spacing: 10*/}
+                        {/*                            }*/}
+                        {/*                        ]}*/}
+                        {/*                        fill={[*/}
+                        {/*                            {*/}
+                        {/*                                match: {*/}
+                        {/*                                    id: 'respuestas'*/}
+                        {/*                                },*/}
+                        {/*                                id: 'lines'*/}
+                        {/*                            }*/}
+                        {/*                        ]}*/}
+                        {/*                        borderColor={{ from: 'color', modifiers: [ [ 'darker', 1.6 ] ] }}*/}
+                        {/*                        axisTop={null}*/}
+                        {/*                        axisRight={null}*/}
+                        {/*                        axisBottom={{*/}
+                        {/*                            tickSize: 5,*/}
+                        {/*                            tickPadding: 5,*/}
+                        {/*                            tickRotation: 0,*/}
+                        {/*                            legend: 'Fecha',*/}
+                        {/*                            legendPosition: 'middle',*/}
+                        {/*                            legendOffset: 32*/}
+                        {/*                        }}*/}
+                        {/*                        axisLeft={{*/}
+                        {/*                            tickSize: 5,*/}
+                        {/*                            tickPadding: 5,*/}
+                        {/*                            tickRotation: 0,*/}
+                        {/*                            legend: '# de respuestas',*/}
+                        {/*                            legendPosition: 'middle',*/}
+                        {/*                            legendOffset: -40*/}
+                        {/*                        }}*/}
+                        {/*                        labelSkipWidth={12}*/}
+                        {/*                        labelSkipHeight={12}*/}
+                        {/*                        labelTextColor={{ from: 'color', modifiers: [ [ 'darker', 1.6 ] ] }}*/}
+                        {/*                        legends={[*/}
+                        {/*                            {*/}
+                        {/*                                dataFrom: 'keys',*/}
+                        {/*                                anchor: 'bottom-right',*/}
+                        {/*                                direction: 'column',*/}
+                        {/*                                justify: false,*/}
+                        {/*                                translateX: 120,*/}
+                        {/*                                translateY: 0,*/}
+                        {/*                                itemsSpacing: 2,*/}
+                        {/*                                itemWidth: 100,*/}
+                        {/*                                itemHeight: 20,*/}
+                        {/*                                itemDirection: 'left-to-right',*/}
+                        {/*                                itemOpacity: 0.85,*/}
+                        {/*                                symbolSize: 20,*/}
+                        {/*                                effects: [*/}
+                        {/*                                    {*/}
+                        {/*                                        on: 'hover',*/}
+                        {/*                                        style: {*/}
+                        {/*                                            itemOpacity: 1*/}
+                        {/*                                        }*/}
+                        {/*                                    }*/}
+                        {/*                                ]*/}
+                        {/*                            }*/}
+                        {/*                        ]}*/}
+                        {/*                        animate={true}*/}
+                        {/*                        motionStiffness={90}*/}
+                        {/*                        motionDamping={15}*/}
+                        {/*                    />*/}
+                        {/*                </div>*/}
+                        {/*            </div>*/}
+                        {/*            <div className="card-value form-stats">*/}
+                        {/*                Total de respuestas: {currentFormData.data.length}*/}
+                        {/*            </div>*/}
+                        {/*        </div>*/}
+                        {/*    </div>*/}
+                        {/*</div>*/}
+
+                        {/*<div className="row">*/}
+                        {/*    <div className="col-12">*/}
+                        {/*        <div className="card">*/}
+                        {/*            <div className="row mb-4">*/}
+                        {/*                <h2 className="col-8">Datos del formulario</h2>*/}
+                        {/*                <div className="col-4">*/}
+                        {/*                    <Dropdown as={ButtonGroup} className="float-right">*/}
+                        {/*                        <Button disabled={true} variant="outline-primary">*/}
+                        {/*                            Descargar*/}
+                        {/*                        </Button>*/}
+
+                        {/*                        <Dropdown.Toggle split variant="primary" id="dropdown-split-basic"/>*/}
+
+                        {/*                        <Dropdown.Menu drop={'left'}>*/}
+                        {/*                            <Dropdown.Item href={koboApi.urls().downloadSubmissions({id: currentForm.id, format: 'csv'})}>CSV</Dropdown.Item>*/}
+                        {/*                            <Dropdown.Item href={koboApi.urls().downloadSubmissions({id: currentForm.id, format: 'xlsx'})}>XLSX</Dropdown.Item>*/}
+                        {/*                        </Dropdown.Menu>*/}
+                        {/*                    </Dropdown>*/}
+                        {/*                </div>*/}
+                        {/*            </div>*/}
+                        {/*            {cachedForms.map(*/}
+                        {/*                form => (*/}
+                        {/*                    <div id={form.id} key={form.id} className="form-table-container">*/}
+                        {/*                        <Table name={form.name} columns={form.columns} data={form.data}/>*/}
+                        {/*                    </div>*/}
+                        {/*                )*/}
+                        {/*            )}*/}
+                        {/*        </div>*/}
+                        {/*    </div>*/}
+                        {/*</div>*/}
                     </div>
                 )}
             </div>
