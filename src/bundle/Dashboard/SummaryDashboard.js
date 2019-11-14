@@ -40,7 +40,7 @@ class SummaryDashboard extends React.Component {
         // Get form metadata url
         let url = `${config.corsProxy}${koboApi.urls().formMetadata(this.state.currentForm.id)}`
 
-        function formatColumnsAndChoices(data) {
+        function filterRequiredMetadata(data) {
             let columns = []
             let choicesLabels = {}
             // Get column names and format them according to data labels
@@ -55,13 +55,18 @@ class SummaryDashboard extends React.Component {
                     }
                 }
             })
+            // Get array of label choices with their id values to replace them when fetching data
             data.content.choices.forEach(choice => {
                 if (choice.label)
                     if (!(choice.label[0].length === 0 || !choice.label[0].trim())) // Check if label is empty
                         choicesLabels[choice.name] = choice.label[0]
             })
-            // Get array of label choices with their id values to replace them when fetching data
+            // Get form link
+            let formLink = data.deployment__links.offline_url
+
+            // Return required metadata
             return {
+                formLink: formLink,
                 columns: columns,
                 choices: choicesLabels
             }
@@ -69,11 +74,12 @@ class SummaryDashboard extends React.Component {
 
         axios.get(url, options)
             .then((response) => response.data)
-            .then(data => formatColumnsAndChoices(data)) // Get only the columns from the metadata
+            .then(data => filterRequiredMetadata(data)) // Get only the columns from the metadata
             .then(data =>
                 this.setState({
                     columns: data.columns,
-                    choicesLabels: data.choices
+                    choicesLabels: data.choices,
+                    formLink: data.formLink
                 }, () => this.fetchFormData())) // Fetch form data once the state has successfully changed
             .catch(error => this.setState({error, isLoading: false}));
     }
@@ -154,6 +160,7 @@ class SummaryDashboard extends React.Component {
         let newForm = {
             id: s.currentForm.id,
             name: s.currentForm.name,
+            formLink: s.formLink,
             columns: s.columns,
             data: s.data
         }
@@ -222,6 +229,13 @@ class SummaryDashboard extends React.Component {
                                         <Button variant="outline-primary" onClick={this.handleShowFormSelector}
                                                 className="w-100 mt-3">
                                             Seleccionar Formulario
+                                        </Button>
+
+                                        <Button variant="outline-primary"
+                                                href={currentFormData.formLink}
+                                                target="_blank"
+                                                className="w-100 mt-3">
+                                            Abrir formulario
                                         </Button>
                                     </div>
                                 </div>
