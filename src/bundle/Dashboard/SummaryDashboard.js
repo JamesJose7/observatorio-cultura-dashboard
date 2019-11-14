@@ -5,6 +5,7 @@ import koboApi from '../../koboApi'
 import DataTable from 'react-data-table-component';
 import lodash from 'lodash'
 import {Dropdown, Button, ButtonGroup, Modal} from "react-bootstrap";
+import {ResponsiveBar} from "@nivo/bar";
 import axios from 'axios'
 import $ from 'jquery'
 
@@ -30,7 +31,9 @@ class SummaryDashboard extends React.Component {
         error: null,
         currentForm: this.props.forms[0], // select first form by default
         showFormSelector: false,
-        cachedForms: []
+        cachedForms: [],
+        // Graphs
+        dateGraphData: []
     }
 
     fetchFormMetadata() {
@@ -105,22 +108,42 @@ class SummaryDashboard extends React.Component {
             .catch(error => this.setState({error, isLoading: false}));
     }
 
+    countValuesRepetitions(data, val) {
+        let counts = {}
+        data.forEach(function (x) {
+            counts[x[val]] = (counts[x[val]] || 0) + 1;
+        })
+        return counts
+    }
+
     updateDashboard = arg => {
         // Hide all tables and show only the currently selected one
         $('.form-table-container').css("display", "none")
         $('#' + this.state.currentForm.id).css("display", "block")
 
         // json response data
-        const submissions = this.state.data
+        const submissions = this.getCachedForm(this.state.currentForm).data
 
         // Dashboard values
-
+        let dates = []
         submissions.forEach(submission => {
-
+            dates.push({fecha: (new Date(submission._submission_time)).toLocaleDateString()}) // Get date from timestamp
         })
+
+        // Build submission date data for bar graph
+        let datesCounts = this.countValuesRepetitions(dates, 'fecha')
+        let dateGraphData = []
+        for (let key in datesCounts) {
+            if (datesCounts.hasOwnProperty(key))
+                dateGraphData.push({
+                    fecha: key.toString(),
+                    respuestas: datesCounts[key]
+                })
+        }
 
         // setting state
         this.setState({
+            dateGraphData: dateGraphData,
             isLoading: false
         })
     }
@@ -188,28 +211,117 @@ class SummaryDashboard extends React.Component {
 
                 {/*// data check*/}
                 {!isLoading ? (
-                    <div className="container-fluid">
+                    <div className="container-fluid summary-dashboard">
                         <div className="row">
-                            <div className="col-lg-9">
-                                <div className="card">
-                                    <div className="card-heading">
-                                        <h2>Summary graphs here</h2>
-                                    </div>
-                                    <div className="card-value form-stats">
-                                        {currentFormData.data.length} respuestas totales
-                                    </div>
-                                </div>
-                            </div>
                             <div className="col-lg-3">
                                 <div className="card">
                                     <div className="card-heading">
-                                        <h2>Acciones</h2>
+                                        <h2>Opciones</h2>
                                     </div>
                                     <div className="form-actions">
                                         <Button variant="outline-primary" onClick={this.handleShowFormSelector}
-                                                className="w-100">
+                                                className="w-100 mt-3">
                                             Seleccionar Formulario
                                         </Button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-lg-9">
+                                <div className="card">
+                                    <div className="card-heading">
+                                        <h2>Respuestas</h2>
+                                    </div>
+                                    <div className="chart-container">
+                                        <div style={{height: "400px"}} className="mb-3">
+                                            <ResponsiveBar
+                                                data={this.state.dateGraphData}
+                                                keys={[ 'respuestas' ]}
+                                                indexBy="fecha"
+                                                margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+                                                padding={0.3}
+                                                colors={{ scheme: 'category10' }}
+                                                defs={[
+                                                    {
+                                                        id: 'dots',
+                                                        type: 'patternDots',
+                                                        background: 'inherit',
+                                                        color: '#3584bb',
+                                                        size: 4,
+                                                        padding: 1,
+                                                        stagger: true
+                                                    },
+                                                    {
+                                                        id: 'lines',
+                                                        type: 'patternLines',
+                                                        background: 'inherit',
+                                                        color: '#3584bb',
+                                                        rotation: -45,
+                                                        lineWidth: 6,
+                                                        spacing: 10
+                                                    }
+                                                ]}
+                                                fill={[
+                                                    {
+                                                        match: {
+                                                            id: 'respuestas'
+                                                        },
+                                                        id: 'lines'
+                                                    }
+                                                ]}
+                                                borderColor={{ from: 'color', modifiers: [ [ 'darker', 1.6 ] ] }}
+                                                axisTop={null}
+                                                axisRight={null}
+                                                axisBottom={{
+                                                    tickSize: 5,
+                                                    tickPadding: 5,
+                                                    tickRotation: 0,
+                                                    legend: 'Fecha',
+                                                    legendPosition: 'middle',
+                                                    legendOffset: 32
+                                                }}
+                                                axisLeft={{
+                                                    tickSize: 5,
+                                                    tickPadding: 5,
+                                                    tickRotation: 0,
+                                                    legend: '# de respuestas',
+                                                    legendPosition: 'middle',
+                                                    legendOffset: -40
+                                                }}
+                                                labelSkipWidth={12}
+                                                labelSkipHeight={12}
+                                                labelTextColor={{ from: 'color', modifiers: [ [ 'darker', 1.6 ] ] }}
+                                                legends={[
+                                                    {
+                                                        dataFrom: 'keys',
+                                                        anchor: 'bottom-right',
+                                                        direction: 'column',
+                                                        justify: false,
+                                                        translateX: 120,
+                                                        translateY: 0,
+                                                        itemsSpacing: 2,
+                                                        itemWidth: 100,
+                                                        itemHeight: 20,
+                                                        itemDirection: 'left-to-right',
+                                                        itemOpacity: 0.85,
+                                                        symbolSize: 20,
+                                                        effects: [
+                                                            {
+                                                                on: 'hover',
+                                                                style: {
+                                                                    itemOpacity: 1
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                ]}
+                                                animate={true}
+                                                motionStiffness={90}
+                                                motionDamping={15}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="card-value form-stats">
+                                        Total de respuestas: {currentFormData.data.length}
                                     </div>
                                 </div>
                             </div>
@@ -272,7 +384,7 @@ class SummaryDashboard extends React.Component {
 
                     // If there is a delay in data, let's let the user know it's loading
                 ) : (
-                    <div className="placeholder container-fluid">
+                    <div className="placeholder container-fluid summary-dashboard">
                         <div className="row align-items-center" style={{minHeight: "80vh"}}>
                             <div className="col-6 mx-auto">
                                 <h1 className="text-center">Loading...</h1>
