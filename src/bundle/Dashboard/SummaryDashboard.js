@@ -229,7 +229,7 @@ class SummaryDashboard extends React.Component {
                             <div className="col-lg-9">
                                 <div className="card">
                                     <div className="card-heading">
-                                        <h2>Respuestas</h2>
+                                        <h2>Respuestas de: {currentFormData.name}</h2>
                                     </div>
                                     <div className="chart-container">
                                         <div style={{height: "400px"}} className="mb-3">
@@ -403,7 +403,12 @@ function Table(props) {
         title={props.name}
         columns={props.columns}
         data={props.data}
-        selectableRows={true}
+        fixedHeader
+        fixedHeaderScrollHeight="300px"
+        highlightOnHover
+        noHeader={true}
+        // selectableRows={true}
+        pagination
     />;
 }
 
