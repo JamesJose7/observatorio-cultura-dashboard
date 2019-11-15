@@ -33,6 +33,8 @@ class SummaryDashboard extends React.Component {
         showFormSelector: false,
         cachedForms: [],
         // Graphs
+        lastAnswerDate: '-',
+        avgAnswersPerDay: 0,
         dateGraphData: []
     }
 
@@ -147,8 +149,16 @@ class SummaryDashboard extends React.Component {
                 })
         }
 
+        // Average answers per day
+        let avgAnswersPerDay = dates.length / Object.keys(datesCounts).length
+
+        // Last answer
+        let lastAnswerDate = new Date(submissions[submissions.length-1]._submission_time).toLocaleString()
+
         // setting state
         this.setState({
+            lastAnswerDate: lastAnswerDate,
+            avgAnswersPerDay: avgAnswersPerDay,
             dateGraphData: dateGraphData,
             isLoading: false
         })
@@ -259,9 +269,9 @@ class SummaryDashboard extends React.Component {
                                         <span>Total de respuestas</span>
                                         <p>{ currentFormData.data.length }</p>
                                         <span>Respuestas por día</span>
-                                        <p>0</p>
+                                        <p>{this.state.avgAnswersPerDay}</p>
                                         <span>Última respuesta</span>
-                                        <p>0</p>
+                                        <p>{this.state.lastAnswerDate}</p>
                                     </div>
                                 </div>
                             </div>
