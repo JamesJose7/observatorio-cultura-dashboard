@@ -123,6 +123,10 @@ header {
   padding: 20px 0;
 }
 
+._loading_overlay_overlay {
+    background-color: #173f5f99 !important;
+}
+
 /* Device specific breakpoints */
 @media (max-width: 1199px) {
     .menu-option {
