@@ -232,10 +232,10 @@ class SummaryDashboard extends React.Component {
 
                         <div id="dashboard-header">
                             <div className="row">
-                                <div className="col-lg-7">
+                                <div className="col-lg-6">
                                     <h1>{currentFormData.name}</h1>
                                 </div>
-                                <div className="col-lg-5">
+                                <div className="col-lg-6">
                                         <div className="form-actions">
                                             <Button variant="info" onClick={this.handleShowFormSelector}
                                                     className="menu-option float-right">
@@ -248,19 +248,18 @@ class SummaryDashboard extends React.Component {
                                             <Button variant="info"
                                                     href={currentFormData.formLink}
                                                     target="_blank"
-                                                    className="menu-option float-right">
+                                                    className="menu-option float-lg-right float-sm-left">
                                                 Abrir formulario
                                                 <i className="material-icons">
                                                     open_in_new
                                                 </i>
                                             </Button>
                                         </div>
-
                                 </div>
                             </div>
                         </div>
                         <div className="row">
-                            <div className="col-lg-3">
+                            <div className="col-lg-4 col-xl-3">
                                 <div className="card">
                                     <div className="card-heading">
                                         <h2>Resumen</h2>
@@ -275,7 +274,7 @@ class SummaryDashboard extends React.Component {
                                     </div>
                                 </div>
                             </div>
-                            <div className="col-lg-9">
+                            <div className="col-lg-8 col-xl-9">
                                 <div className="card">
                                     <div className="card-heading">
                                         <h2>Respuestas por fecha</h2>

@@ -114,11 +114,42 @@ header {
 
 .form-summary-data p:last-child {
     font-weight: bold;
-    font-size: 1.5em;
+    font-size: 1.4em;
 }
 
 .form-stats {
   background-color: rgba(200,200,200,.2);
   text-align: center;
   padding: 20px 0;
+}
+
+/* Device specific breakpoints */
+@media (max-width: 1199px) {
+    .menu-option {
+        font-size: 0.9em !important;
+    }
+
+    .form-summary-data p:last-child {
+        font-size: 1.3em;
+    }
+}
+
+@media (max-width: 991px) {
+    #dashboard-header {
+        border: none;
+    }
+
+    .menu-option i {
+        float: none;
+        display: block;
+        margin-top: 4px;
+    }
+
+    .form-summary-data {
+        height: auto !important;
+    }
+
+    .form-summary-data p, .form-summary-data span {
+        margin: 0;
+    }
 }
