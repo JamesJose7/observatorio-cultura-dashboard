@@ -151,10 +151,14 @@ class SummaryDashboard extends React.Component {
         }
 
         // Average answers per day
-        let avgAnswersPerDay = dates.length / Object.keys(datesCounts).length
+        let avgAnswersPerDay = 0
+        if (dates.length > 0)
+            avgAnswersPerDay = dates.length / Object.keys(datesCounts).length
 
         // Last answer
-        let lastAnswerDate = new Date(submissions[submissions.length-1]._submission_time).toLocaleString()
+        let lastAnswerDate = "N/A"
+        if (submissions.length > 0)
+            lastAnswerDate = new Date(submissions[submissions.length-1]._submission_time).toLocaleString()
 
         // setting state
         this.setState({
