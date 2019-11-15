@@ -11,12 +11,20 @@ header {
   color: #fff;
 }
 
+h1 {
+    font-size: 2.2em !important;
+}
+
 /* Dashboard */
 
 #dashboard-header {
   margin-top: 20px;
   padding-bottom: 1px;
   border-bottom: thin solid rgba(50,50,50,.2);
+}
+
+#dashboard-header h1 {
+    font-size: 2em !important;
 }
 
 .download-submissions i {
@@ -155,5 +163,24 @@ header {
 
     .form-summary-data p, .form-summary-data span {
         margin: 0;
+    }
+}
+
+@media (max-width: 575px) {
+    h1 {
+        font-size: 1.7em !important;
+        text-align: center;
+    }
+
+    #dashboard-header h1 {
+        font-size: 1.5em !important;
+    }
+
+    .menu-option {
+        font-size: .7em !important;
+    }
+
+    .menu-option i {
+        font-size: 1.5em;
     }
 }

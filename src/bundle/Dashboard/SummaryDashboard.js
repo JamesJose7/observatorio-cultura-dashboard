@@ -244,7 +244,7 @@ class SummaryDashboard extends React.Component {
                                         <div className="form-actions">
                                             <Button variant="info" onClick={this.handleShowFormSelector}
                                                     className="menu-option float-right">
-                                                Seleccionar Formulario
+                                                Cambiar Formulario
                                                 <i className="material-icons">
                                                     menu
                                                 </i>
@@ -393,7 +393,9 @@ class SummaryDashboard extends React.Component {
                                 >
                                     <div className="card">
                                         <div className="row mb-4">
-                                            <h2 className="col-8">Datos del formulario</h2>
+                                            <div className="col-8 card-heading">
+                                                <h2>Datos del formulario</h2>
+                                            </div>
                                             <div className="col-4">
                                                 <Dropdown as={ButtonGroup} className="float-right">
                                                     <Button disabled={true} variant="outline-primary">
