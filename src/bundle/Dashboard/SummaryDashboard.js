@@ -391,7 +391,7 @@ class SummaryDashboard extends React.Component {
                                     active={isLoading}
                                     spinner={<BounceLoader color={'#ffc107'} />}
                                 >
-                                    <div className="card">
+                                    <div className="card" style={{minHeight: "auto"}}>
                                         <div className="row mb-4">
                                             <div className="col-8 card-heading">
                                                 <h2>Datos del formulario</h2>
@@ -431,7 +431,7 @@ class SummaryDashboard extends React.Component {
                             centered
                         >
                             <Modal.Header closeButton>
-                                <Modal.Title>Seleccionar formulario</Modal.Title>
+                                <Modal.Title>Cambiar formulario</Modal.Title>
                             </Modal.Header>
                             <Modal.Body>
                                 <ButtonGroup vertical>
@@ -465,7 +465,7 @@ class SummaryDashboard extends React.Component {
                                     <div className="form-actions">
                                         <Button variant="info"
                                                 className="menu-option float-right">
-                                            Seleccionar Formulario
+                                            Cambiar Formulario
                                             <i className="material-icons">
                                                 menu
                                             </i>
@@ -526,7 +526,7 @@ class SummaryDashboard extends React.Component {
                                     active={true}
                                     spinner={<BounceLoader color={'#ffc107'} />}
                                 >
-                                    <div className="card">
+                                    <div className="card" style={{minHeight: "auto"}}>
                                         <div className="row mb-4">
                                             <h2 className="col-8">Datos del formulario</h2>
                                             <div className="col-4">
