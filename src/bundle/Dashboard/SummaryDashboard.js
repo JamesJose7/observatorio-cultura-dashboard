@@ -261,13 +261,7 @@ class SummaryDashboard extends React.Component {
         for (let value of this.state.cachedForms)
             if (value.id === form.id)
                 return value
-        return { // Return empty object when none is found
-            columns: [],
-            data: [],
-            formLink: "",
-            id: "",
-            name: ""
-        }
+        return false
     }
 
     componentDidMount() {
@@ -292,6 +286,15 @@ class SummaryDashboard extends React.Component {
         const {isLoading, error, currentForm, rowsData, pieChartData} = this.state
 
         let currentFormData = this.getCachedForm(currentForm)
+
+        if (!currentFormData)
+            currentFormData = { // Return empty object when none is found
+                columns: [],
+                data: [],
+                formLink: "",
+                id: "",
+                name: ""
+            }
 
         function round(num) {
             let rounded = parseFloat(Math.round(num * 100) / 100).toFixed(2)
