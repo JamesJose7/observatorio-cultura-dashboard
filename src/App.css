@@ -77,7 +77,7 @@ h1 {
 }
 
 .chart-container > div{
-  height: 230px;
+  height: 230px !important;
 }
 
 .card-right-border {

@@ -5,6 +5,7 @@ import koboApi from '../../koboApi'
 import DataTable from 'react-data-table-component';
 import {Dropdown, Button, ButtonGroup, Modal} from "react-bootstrap";
 import {ResponsiveBar} from "@nivo/bar";
+import {ResponsivePie} from "@nivo/pie";
 import LoadingOverlay from 'react-loading-overlay';
 import axios from 'axios'
 import $ from 'jquery'
@@ -37,7 +38,8 @@ class SummaryDashboard extends React.Component {
         // Graphs
         lastAnswerDate: '-',
         avgAnswersPerDay: 0,
-        dateGraphData: []
+        dateGraphData: [],
+        pieChartData: []
     }
 
     fetchFormMetadata() {
@@ -54,6 +56,7 @@ class SummaryDashboard extends React.Component {
                         columns.push({
                             name: col.label[0],
                             selector: col.name,
+                            type: col.type,
                             sortable: true
                         })
                     }
@@ -140,6 +143,39 @@ class SummaryDashboard extends React.Component {
         const submissions = this.getCachedForm(this.state.currentForm).data
         const columns = this.getCachedForm(this.state.currentForm).columns
 
+        // Filter columns that are eligible for pie charting
+        let pieChartColumns = []
+        let pieChartData = []
+        columns.forEach(col => {
+            if (col.type === 'select_one')
+                pieChartColumns.push(col)
+        })
+
+        // Count value repetitions for each question
+        pieChartColumns.forEach(pieCol => {
+            // Repetition counts for each question
+            let counts = this.countValuesRepetitions(submissions, pieCol.selector)
+            //Create an object that will store the values
+            let pieData = []
+            for (let key in counts) {
+                if (counts.hasOwnProperty(key)) {
+                    if (key !== "undefined") {
+                        pieData.push({
+                            "id": key,
+                            "label": key,
+                            "value": counts[key]
+                        })
+                    }
+                }
+            }
+            if (pieData.length > 0)
+                pieChartData.push({
+                    name: pieCol.name,
+                    id: pieCol.selector,
+                    data: pieData
+                })
+        })
+
         // Dashboard values
         let dates = []
         let simpleDates = []
@@ -160,7 +196,7 @@ class SummaryDashboard extends React.Component {
         }
 
         let rowsData = []
-        if (columns) {
+        /*if (columns) {
             submissions.forEach(row => {
                 let rowData = []
                 columns.forEach(col => {
@@ -169,7 +205,8 @@ class SummaryDashboard extends React.Component {
                 })
                 rowsData.push(rowData)
             })
-        }
+        }*/
+
 
         // Average answers per day
         let avgAnswersPerDay = 0
@@ -187,6 +224,7 @@ class SummaryDashboard extends React.Component {
             lastAnswerDate: lastAnswerDate,
             avgAnswersPerDay: avgAnswersPerDay,
             dateGraphData: dateGraphData,
+            pieChartData: pieChartData,
             rowsData: rowsData,
             isLoading: false
         })
@@ -245,7 +283,7 @@ class SummaryDashboard extends React.Component {
     handleCloseFormSelector = () => this.setState({showFormSelector: false})
 
     render() {
-        const {isLoading, error, currentForm, rowsData} = this.state
+        const {isLoading, error, currentForm, rowsData, pieChartData} = this.state
 
         let currentFormData = this.getCachedForm(currentForm)
 
@@ -323,7 +361,7 @@ class SummaryDashboard extends React.Component {
                                         <div className="card-heading">
                                             <h2>Respuestas por fecha</h2>
                                         </div>
-                                        <div className="chart-container parallel-card-body">
+                                        <div className="parallel-card-body">
                                             <ResponsiveBar
                                                 data={this.state.dateGraphData}
                                                 keys={[ 'respuestas' ]}
@@ -440,6 +478,52 @@ class SummaryDashboard extends React.Component {
                                                     </Dropdown.Menu>
                                                 </Dropdown>
                                             </div>
+                                        </div>
+                                        <div className="row">
+                                            {pieChartData.map(question => (
+                                                <div className="col-lg-6 mb-4" key={question.id}>
+                                                    <h5>{question.name}</h5>
+                                                    <div className="chart-container">
+                                                        <ResponsivePie
+                                                            title
+                                                            data={question.data}
+                                                            margin={{ top: 30, right: 30, bottom: 30, left: 80 }}
+                                                            innerRadius={0.5}
+                                                            padAngle={0.7}
+                                                            cornerRadius={3}
+                                                            colors={{ scheme: 'paired' }}
+                                                            borderWidth={1}
+                                                            borderColor={{ from: 'color', modifiers: [ [ 'darker', 0.2 ] ] }}
+                                                            enableRadialLabels={false}
+                                                            slicesLabelsSkipAngle={10}
+                                                            slicesLabelsTextColor="#333333"
+                                                            animate={true}
+                                                            motionStiffness={90}
+                                                            motionDamping={15}
+                                                            legends={[
+                                                                {
+                                                                    anchor: 'left',
+                                                                    direction: 'column',
+                                                                    translateX: -50,
+                                                                    itemWidth: 20,
+                                                                    itemHeight: 40,
+                                                                    itemTextColor: '#999',
+                                                                    symbolSize: 18,
+                                                                    symbolShape: 'circle',
+                                                                    effects: [
+                                                                        {
+                                                                            on: 'hover',
+                                                                            style: {
+                                                                                itemTextColor: '#000'
+                                                                            }
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
                                         {/*<ResponsiveTable columns={currentFormData.columns} data={rowsData}/>*/}
                                         {/*{cachedForms.map(
