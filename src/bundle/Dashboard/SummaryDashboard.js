@@ -261,7 +261,13 @@ class SummaryDashboard extends React.Component {
         for (let value of this.state.cachedForms)
             if (value.id === form.id)
                 return value
-        return false
+        return { // Return empty object when none is found
+            columns: [],
+            data: [],
+            formLink: "",
+            id: "",
+            name: ""
+        }
     }
 
     componentDidMount() {
