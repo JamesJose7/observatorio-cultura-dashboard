@@ -27,6 +27,7 @@ class SummaryDashboard extends React.Component {
     state = {
         isLoading: true,
         data: [],
+        rowsData: [],
         columns: [],
         choicesLabels: {},
         error: null,
@@ -132,6 +133,7 @@ class SummaryDashboard extends React.Component {
 
         // json response data
         const submissions = this.getCachedForm(this.state.currentForm).data
+        const columns = this.getCachedForm(this.state.currentForm).columns
 
         // Dashboard values
         let dates = []
@@ -150,6 +152,18 @@ class SummaryDashboard extends React.Component {
                 })
         }
 
+        let rowsData = []
+        if (columns) {
+            submissions.forEach(row => {
+                let rowData = []
+                columns.forEach(col => {
+                    if (submissions && submissions.length > 0)
+                        rowData.push(row[col.selector])
+                })
+                rowsData.push(rowData)
+            })
+        }
+
         // Average answers per day
         let avgAnswersPerDay = 0
         if (dates.length > 0)
@@ -165,6 +179,7 @@ class SummaryDashboard extends React.Component {
             lastAnswerDate: lastAnswerDate,
             avgAnswersPerDay: avgAnswersPerDay,
             dateGraphData: dateGraphData,
+            rowsData: rowsData,
             isLoading: false
         })
     }
@@ -222,9 +237,16 @@ class SummaryDashboard extends React.Component {
     handleCloseFormSelector = () => this.setState({showFormSelector: false})
 
     render() {
-        const {isLoading, error, currentForm, cachedForms} = this.state
+        const {isLoading, error, currentForm, rowsData} = this.state
 
         let currentFormData = this.getCachedForm(currentForm)
+
+        function round(num) {
+            let rounded = parseFloat(Math.round(num * 100) / 100).toFixed(2)
+                if (rounded > 0.00)
+                    return rounded
+            return 0
+        }
 
         return (
             <div>
@@ -277,7 +299,7 @@ class SummaryDashboard extends React.Component {
                                             <span>Total de respuestas</span>
                                             <p>{ currentFormData.data.length }</p>
                                             <span>Respuestas por día</span>
-                                            <p>{this.state.avgAnswersPerDay}</p>
+                                            <p>{round(this.state.avgAnswersPerDay)}</p>
                                             <span>Última respuesta</span>
                                             <p>{this.state.lastAnswerDate}</p>
                                         </div>
@@ -411,13 +433,14 @@ class SummaryDashboard extends React.Component {
                                                 </Dropdown>
                                             </div>
                                         </div>
-                                        {cachedForms.map(
+                                        {/*<ResponsiveTable columns={currentFormData.columns} data={rowsData}/>*/}
+                                        {/*{cachedForms.map(
                                             form => (
                                                 <div id={form.id} key={form.id} className="form-table-container">
                                                     <Table name={form.name} columns={form.columns} data={form.data}/>
                                                 </div>
                                             )
-                                        )}
+                                        )}*/}
                                     </div>
                                 </LoadingOverlay>
                             </div>
