@@ -126,6 +126,11 @@ class SummaryDashboard extends React.Component {
         return counts
     }
 
+    convertToEstTime(date) {
+        let offset = -300; //Timezone offset for EST in minutes.
+        return new Date(date.getTime() + offset*60*1000);
+    }
+
     updateDashboard = arg => {
         // Hide all tables and show only the currently selected one
         $('.form-table-container').css("display", "none")
@@ -137,8 +142,10 @@ class SummaryDashboard extends React.Component {
 
         // Dashboard values
         let dates = []
+        let simpleDates = []
         submissions.forEach(submission => {
             dates.push({fecha: (new Date(submission._submission_time)).toLocaleDateString()}) // Get date from timestamp
+            simpleDates.push(submission._submission_time) // Get simple dates for sorting
         })
 
         // Build submission date data for bar graph
@@ -171,8 +178,9 @@ class SummaryDashboard extends React.Component {
 
         // Last answer
         let lastAnswerDate = "N/A"
+        simpleDates = simpleDates.sort() // Sort dates to get the latest one
         if (submissions.length > 0)
-            lastAnswerDate = new Date(submissions[submissions.length-1]._submission_time).toLocaleString()
+            lastAnswerDate = this.convertToEstTime(new Date(simpleDates[simpleDates.length-1])).toLocaleString()
 
         // setting state
         this.setState({
