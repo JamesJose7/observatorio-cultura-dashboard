@@ -5,10 +5,16 @@ body {
 }
 
 /* Header */
-header {
-  background-color: #173f5f;
-  padding: 7px 0;
-  color: #fff;
+header nav {
+    padding: 7px 0;
+}
+
+header nav a {
+    color: #fff !important;
+}
+
+.bg-utpl {
+    background-color: #173f5f;
 }
 
 h1 {
