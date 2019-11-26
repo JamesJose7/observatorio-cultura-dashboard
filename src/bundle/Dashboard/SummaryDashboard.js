@@ -11,7 +11,7 @@ import axios from 'axios'
 import $ from 'jquery'
 import {BounceLoader} from "react-spinners";
 
-const CancelToken = axios.CancelToken;
+/*const CancelToken = axios.CancelToken;
 let cancelMeta;
 const options = {
     headers: {
@@ -22,7 +22,7 @@ const options = {
         // An executor function receives a cancel function as a parameter
         cancelMeta = c;
     })
-}
+}*/
 
 class SummaryDashboard extends React.Component {
     state = {
@@ -79,7 +79,7 @@ class SummaryDashboard extends React.Component {
             }
         }
 
-        axios.get(url, options)
+        axios.get(url)
             .then((response) => response.data)
             .then(data => filterRequiredMetadata(data)) // Get only the columns from the metadata
             .then(data =>
@@ -111,7 +111,7 @@ class SummaryDashboard extends React.Component {
             return data
         }
 
-        axios.get(url, options)
+        axios.get(url)
             .then((response) => response.data.results)
             .then(data => cleanResponses(data, this.state.choicesLabels))
             .then(data =>
@@ -264,12 +264,22 @@ class SummaryDashboard extends React.Component {
         return false
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        // Check if the logged state has changed, load forms in that case
+        if (prevProps.isLoggedIn !== this.props.isLoggedIn) {
+            if (this.props.isLoggedIn)
+                this.loadForm()
+        }
+    }
+
     componentDidMount() {
-        this.loadForm()
+        // If the user is logged in already load his forms
+        if (this.props.isLoggedIn)
+            this.loadForm()
     }
 
     componentWillUnmount() {
-        cancelMeta()
+        // cancelMeta()
     }
 
     changeSelectedForm(form) {

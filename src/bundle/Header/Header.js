@@ -38,7 +38,12 @@ class Header extends React.Component {
                     </div>
                 </Navbar>
 
-                <LoginModal showLoginModal={this.state.showLoginModal} handleCloseLoginModal={this.handleCloseLoginModal} />
+                <LoginModal
+                    isLoggedIn={this.props.isLoggedIn}
+                    changeLogin={this.props.changeLogin.bind(this)}
+                    showLoginModal={this.state.showLoginModal}
+                    handleShowLoginModal={this.handleShowLoginModal}
+                    handleCloseLoginModal={this.handleCloseLoginModal} />
             </header>
         )
     }

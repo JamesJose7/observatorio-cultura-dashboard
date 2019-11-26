@@ -1,9 +1,10 @@
 export default {
     urls() {
         return {
-            formMetadata: (id) => `https://kf.kobotoolbox.org/api/v2/assets/${id}/?format=json`,
-            formSubmissions: (id) => `https://kf.kobotoolbox.org/api/v2/assets/${id}/data.json`,
-            downloadSubmissions: ({ id, format }) => `https://kc.kobotoolbox.org/jeeguiguren/reports/${id}/export.${format}`,
+            login: 'http://localhost:8080/koboApi/api/v1/login',
+            formMetadata: (id) => `http://localhost:8080/koboApi/api/v1/formMetadata/${id}`,
+            formSubmissions: (id) => `http://localhost:8080/koboApi/api/v1/submissions/${id}`,
+            downloadSubmissions: ({ id, format }) => `https://kc.kobotoolbox.org/smartland/reports/${id}/export.${format}`,
         }
     }
 }
