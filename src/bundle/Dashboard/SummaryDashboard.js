@@ -44,7 +44,7 @@ class SummaryDashboard extends React.Component {
 
     fetchFormMetadata() {
         // Get form metadata url
-        let url = `${config.corsProxy}${koboApi.urls().formMetadata(this.state.currentForm.id)}`
+        let url = `${koboApi.urls().formMetadata(this.state.currentForm.id)}`
 
         function filterRequiredMetadata(data) {
             let columns = []
@@ -93,7 +93,7 @@ class SummaryDashboard extends React.Component {
 
     fetchFormData() {
         // Get form submissions url
-        let url = `${config.corsProxy}${koboApi.urls().formSubmissions(this.state.currentForm.id)}`
+        let url = `${koboApi.urls().formSubmissions(this.state.currentForm.id)}`
 
         function cleanResponses(data, choicesLabels) {
             // Change every value from their ID into their actual label

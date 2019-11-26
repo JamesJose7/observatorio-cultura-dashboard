@@ -15,7 +15,7 @@ class FormDashboard extends React.Component {
         let formId = 'abSepFikh7Kh6E6dwrbxAq'
         const url = `${config.corsProxy}https://kf.kobotoolbox.org/api/v2/assets/${ formId }/data.json`
 
-        fetch(url, {
+        /*fetch(url, {
             headers: new Headers({
                 'Authorization': config.koboToken,
                 'X-Requested-With': 'application/json'
@@ -31,7 +31,7 @@ class FormDashboard extends React.Component {
                 }, () => this.getData())
             )
             // Catch any errors we hit and update the app
-            .catch(error => this.setState({error, isLoading: false}));
+            .catch(error => this.setState({error, isLoading: false}));*/
     }
 
     getData = arg => {
