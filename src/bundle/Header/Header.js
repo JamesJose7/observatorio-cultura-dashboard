@@ -3,6 +3,7 @@ import '../../App.css'
 import logo from './utpl_logo.png'
 import {Nav, Navbar} from "react-bootstrap";
 import LoginModal from "../Login/LoginModal";
+import AuthenticationService from "../Auth/AuthenticationService";
 
 class Header extends React.Component {
 
@@ -12,6 +13,14 @@ class Header extends React.Component {
 
     handleShowLoginModal = () => this.setState({showLoginModal: true})
     handleCloseLoginModal = () => this.setState({showLoginModal: false})
+
+    closeSession = () => {
+        // Close session from auth service
+        AuthenticationService.logout()
+        this.props.changeLogin(false)
+        // Open login modal
+        this.handleShowLoginModal()
+    }
 
     render() {
 
@@ -32,7 +41,11 @@ class Header extends React.Component {
                         <Navbar.Toggle aria-controls="basic-navbar-nav" className="navbar-dark" />
                         <Navbar.Collapse id="basic-navbar-nav">
                             <Nav className="ml-auto">
-                                <Nav.Link href="#" onClick={this.handleShowLoginModal.bind(this)}>Iniciar sesión</Nav.Link>
+                                {this.props.isLoggedIn ? (
+                                    <Nav.Link href="#" onClick={this.closeSession.bind(this)}>Cerrar sesión</Nav.Link>
+                                ) : (
+                                    <Nav.Link href="#" onClick={this.handleShowLoginModal.bind(this)}>Iniciar sesión</Nav.Link>
+                                )}
                             </Nav>
                         </Navbar.Collapse>
                     </div>
