@@ -1,6 +1,5 @@
 import React from 'react'
 import '../../App.css'
-import config from '../../config'
 import koboApi from '../../koboApi'
 import DataTable from 'react-data-table-component';
 import {Dropdown, Button, ButtonGroup, Modal} from "react-bootstrap";
@@ -44,7 +43,7 @@ class SummaryDashboard extends React.Component {
 
     fetchFormMetadata() {
         // Get form metadata url
-        let url = `${koboApi.urls().formMetadata(this.state.currentForm.id)}`
+        let url = `${koboApi.urls().formMetadata(this.state.currentForm.formId, this.state.currentForm.token)}`
 
         function filterRequiredMetadata(data) {
             let columns = []
@@ -93,7 +92,7 @@ class SummaryDashboard extends React.Component {
 
     fetchFormData() {
         // Get form submissions url
-        let url = `${koboApi.urls().formSubmissions(this.state.currentForm.id)}`
+        let url = `${koboApi.urls().formSubmissions(this.state.currentForm.formId, this.state.currentForm.token)}`
 
         function cleanResponses(data, choicesLabels) {
             // Change every value from their ID into their actual label
@@ -492,8 +491,8 @@ class SummaryDashboard extends React.Component {
                                                     <Dropdown.Toggle split variant="primary" id="dropdown-split-basic"/>
 
                                                     <Dropdown.Menu drop={'left'}>
-                                                        <Dropdown.Item href={koboApi.urls().downloadSubmissions({id: currentForm.id, format: 'csv'})}>CSV</Dropdown.Item>
-                                                        <Dropdown.Item href={koboApi.urls().downloadSubmissions({id: currentForm.id, format: 'xlsx'})}>XLSX</Dropdown.Item>
+                                                        <Dropdown.Item href={koboApi.urls().downloadSubmissions({koboUser: currentForm.koboUser, id: currentForm.formId, format: 'csv'})}>CSV</Dropdown.Item>
+                                                        <Dropdown.Item href={koboApi.urls().downloadSubmissions({koboUser: currentForm.koboUser, id: currentForm.formId, format: 'xlsx'})}>XLSX</Dropdown.Item>
                                                     </Dropdown.Menu>
                                                 </Dropdown>
                                             </div>

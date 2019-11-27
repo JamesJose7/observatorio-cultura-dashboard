@@ -21,6 +21,11 @@ h1 {
     font-size: 2.2em !important;
 }
 
+.logged-username {
+    font-size: 0.8em !important;
+    color: rgba(255,255,255,0.8) !important;
+}
+
 /* Dashboard */
 
 #dashboard-header {

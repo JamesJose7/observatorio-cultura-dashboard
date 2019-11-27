@@ -42,7 +42,7 @@ class Header extends React.Component {
                         <Navbar.Collapse id="basic-navbar-nav">
                             <Nav className="ml-auto">
                                 {this.props.isLoggedIn ? (
-                                    <Nav.Link href="#" onClick={this.closeSession.bind(this)}>Cerrar sesión</Nav.Link>
+                                    <Nav.Link href="#" onClick={this.closeSession.bind(this)}><span className="logged-username">({this.props.loggedUsername})</span> Cerrar sesión</Nav.Link>
                                 ) : (
                                     <Nav.Link href="#" onClick={this.handleShowLoginModal.bind(this)}>Iniciar sesión</Nav.Link>
                                 )}
