@@ -12,6 +12,7 @@ class App extends React.Component {
         isLoggedIn: false,
         isAuthComplete: false,
         userForms: null,
+        userHasForms: false,
         loggedUsername: ''
     }
 
@@ -37,13 +38,18 @@ class App extends React.Component {
                 .then((response) => this.setState({
                     userForms: response.data,
                     loggedUsername: response.data.utplUser
+                }, () => {
+                    let userForms = this.state.userForms
+                    if (userForms)
+                        if (userForms.forms.length > 0) this.setState({userHasForms: true})
+                        else this.setState({userHasForms: false})
                 }))
                 .catch(error => console.log(error))
     }
 
     render() {
 
-        const {isAuthComplete, userForms} = this.state
+        const {isAuthComplete, userHasForms, userForms} = this.state
 
         return (
             <div className="App">
@@ -53,7 +59,7 @@ class App extends React.Component {
                     loggedUsername={this.state.loggedUsername}
                 />
 
-                {isAuthComplete && userForms ? (
+                {isAuthComplete && userHasForms ? (
                     <SummaryDashboard
                         isLoggedIn={AuthenticationService.isUserLoggedIn()}
                         forms={userForms.forms}
