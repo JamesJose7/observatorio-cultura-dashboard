@@ -23,7 +23,11 @@ h1 {
 
 .logged-username {
     font-size: 0.8em !important;
-    color: rgba(255,255,255,0.8) !important;
+    color: rgba(255,255,255,0.7) !important;
+}
+
+.nav-link:hover, .nav-link:hover .logged-username {
+    color: rgba(255,255,255,0.4) !important;
 }
 
 /* Dashboard */

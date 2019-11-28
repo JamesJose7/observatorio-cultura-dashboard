@@ -26,7 +26,7 @@ class Header extends React.Component {
 
         return(
             <header>
-                <Navbar bg="utpl" expand="lg">
+                <Navbar bg="utpl" expand="lg" className="navbar-dark">
                     <div className="container-fluid p-0">
                         <Navbar.Brand href="#home">
                             <img
@@ -36,11 +36,12 @@ class Header extends React.Component {
                                 height="30"
                                 className="d-inline-block align-top"
                             />{' '}
-                            Visualizador de Formularios
+                            <span className="d-none d-sm-inline-block">Visualizador de Formularios</span>
+                            <span className="d-inline-block d-sm-none">Formularios</span>
                         </Navbar.Brand>
                         <Navbar.Toggle aria-controls="basic-navbar-nav" className="navbar-dark" />
                         <Navbar.Collapse id="basic-navbar-nav">
-                            <Nav className="ml-auto">
+                            <Nav className="ml-auto text-right">
                                 {this.props.isLoggedIn ? (
                                     <Nav.Link href="#" onClick={this.closeSession.bind(this)}><span className="logged-username">({this.props.loggedUsername})</span> Cerrar sesión</Nav.Link>
                                 ) : (
