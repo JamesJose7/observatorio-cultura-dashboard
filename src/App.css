@@ -104,8 +104,8 @@ h1 {
   padding-bottom: 50px;
 }
 
-.parallel-card-body {
-  height: 350px;
+.parallel-card-body, .parallel-card-body > div {
+    height: 350px;
 }
 
 .menu-option {
@@ -197,5 +197,17 @@ h1 {
 
     .menu-option i {
         font-size: 1.5em;
+    }
+
+    .chart-container > div{
+        height: 460px !important;
+    }
+
+    .parallel-card-body {
+        height: auto;
+    }
+
+    .parallel-card-body > div {
+        height: 420px;
     }
 }

@@ -1,14 +1,13 @@
 import React from 'react'
 import '../../App.css'
 import koboApi from '../../koboApi'
-import DataTable from 'react-data-table-component';
 import {Dropdown, Button, ButtonGroup, Modal} from "react-bootstrap";
-import {ResponsiveBar} from "@nivo/bar";
-import {ResponsivePie} from "@nivo/pie";
 import LoadingOverlay from 'react-loading-overlay';
 import axios from 'axios'
 import $ from 'jquery'
 import {BounceLoader} from "react-spinners";
+import CustomPieChart from "./CustomPieChart";
+import CustomBarChart from "./CustomBarChart";
 
 /*const CancelToken = axios.CancelToken;
 let cancelMeta;
@@ -380,91 +379,9 @@ class SummaryDashboard extends React.Component {
                                             <h2>Respuestas por fecha</h2>
                                         </div>
                                         <div className="parallel-card-body">
-                                            <ResponsiveBar
+                                            <CustomBarChart
                                                 data={this.state.dateGraphData}
-                                                keys={[ 'respuestas' ]}
-                                                indexBy="fecha"
-                                                margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
-                                                padding={0.3}
-                                                colors={{ scheme: 'category10' }}
-                                                defs={[
-                                                    {
-                                                        id: 'dots',
-                                                        type: 'patternDots',
-                                                        background: 'inherit',
-                                                        color: '#3584bb',
-                                                        size: 4,
-                                                        padding: 1,
-                                                        stagger: true
-                                                    },
-                                                    {
-                                                        id: 'lines',
-                                                        type: 'patternLines',
-                                                        background: 'inherit',
-                                                        color: '#3584bb',
-                                                        rotation: -45,
-                                                        lineWidth: 6,
-                                                        spacing: 10
-                                                    }
-                                                ]}
-                                                fill={[
-                                                    {
-                                                        match: {
-                                                            id: 'respuestas'
-                                                        },
-                                                        id: 'lines'
-                                                    }
-                                                ]}
-                                                borderColor={{ from: 'color', modifiers: [ [ 'darker', 1.6 ] ] }}
-                                                axisTop={null}
-                                                axisRight={null}
-                                                axisBottom={{
-                                                    tickSize: 5,
-                                                    tickPadding: 5,
-                                                    tickRotation: 0,
-                                                    legend: 'Fecha',
-                                                    legendPosition: 'middle',
-                                                    legendOffset: 32
-                                                }}
-                                                axisLeft={{
-                                                    tickSize: 5,
-                                                    tickPadding: 5,
-                                                    tickRotation: 0,
-                                                    legend: '# de respuestas',
-                                                    legendPosition: 'middle',
-                                                    legendOffset: -40
-                                                }}
-                                                labelSkipWidth={12}
-                                                labelSkipHeight={12}
-                                                labelTextColor={{ from: 'color', modifiers: [ [ 'darker', 1.6 ] ] }}
-                                                legends={[
-                                                    {
-                                                        dataFrom: 'keys',
-                                                        anchor: 'bottom-right',
-                                                        direction: 'column',
-                                                        justify: false,
-                                                        translateX: 120,
-                                                        translateY: 0,
-                                                        itemsSpacing: 2,
-                                                        itemWidth: 100,
-                                                        itemHeight: 20,
-                                                        itemDirection: 'left-to-right',
-                                                        itemOpacity: 0.85,
-                                                        symbolSize: 20,
-                                                        effects: [
-                                                            {
-                                                                on: 'hover',
-                                                                style: {
-                                                                    itemOpacity: 1
-                                                                }
-                                                            }
-                                                        ]
-                                                    }
-                                                ]}
-                                                animate={true}
-                                                motionStiffness={90}
-                                                motionDamping={15}
-                                            />
+                                                />
                                         </div>
                                     </div>
                                 </LoadingOverlay>
@@ -502,55 +419,13 @@ class SummaryDashboard extends React.Component {
                                                 <div className="col-lg-6 mb-4" key={question.id}>
                                                     <h5>{question.name}</h5>
                                                     <div className="chart-container">
-                                                        <ResponsivePie
-                                                            title
+                                                        <CustomPieChart
                                                             data={question.data}
-                                                            margin={{ top: 30, right: 30, bottom: 30, left: 80 }}
-                                                            innerRadius={0.5}
-                                                            padAngle={0.7}
-                                                            cornerRadius={3}
-                                                            colors={{ scheme: 'paired' }}
-                                                            borderWidth={1}
-                                                            borderColor={{ from: 'color', modifiers: [ [ 'darker', 0.2 ] ] }}
-                                                            enableRadialLabels={false}
-                                                            slicesLabelsSkipAngle={10}
-                                                            slicesLabelsTextColor="#333333"
-                                                            animate={true}
-                                                            motionStiffness={90}
-                                                            motionDamping={15}
-                                                            legends={[
-                                                                {
-                                                                    anchor: 'left',
-                                                                    direction: 'column',
-                                                                    translateX: -50,
-                                                                    itemWidth: 20,
-                                                                    itemHeight: 40,
-                                                                    itemTextColor: '#999',
-                                                                    symbolSize: 18,
-                                                                    symbolShape: 'circle',
-                                                                    effects: [
-                                                                        {
-                                                                            on: 'hover',
-                                                                            style: {
-                                                                                itemTextColor: '#000'
-                                                                            }
-                                                                        }
-                                                                    ]
-                                                                }
-                                                            ]}
                                                         />
                                                     </div>
                                                 </div>
                                             ))}
                                         </div>
-                                        {/*<ResponsiveTable columns={currentFormData.columns} data={rowsData}/>*/}
-                                        {/*{cachedForms.map(
-                                            form => (
-                                                <div id={form.id} key={form.id} className="form-table-container">
-                                                    <Table name={form.name} columns={form.columns} data={form.data}/>
-                                                </div>
-                                            )
-                                        )}*/}
                                     </div>
                                 </LoadingOverlay>
                             </div>
@@ -583,12 +458,6 @@ class SummaryDashboard extends React.Component {
                     // If there is a delay in data, let's let the user know it's loading
                 ) : (
                     <div className="placeholder container-fluid summary-dashboard">
-                        {/*<div className="row align-items-center" style={{minHeight: "80vh"}}>
-                            <div className="col-6 mx-auto">
-                                <h1 className="text-center">Cargando...</h1>
-                            </div>
-                        </div>*/}
-
                         <div id="dashboard-header">
                             <div className="row">
                                 <div className="col-lg-6">
@@ -645,8 +514,8 @@ class SummaryDashboard extends React.Component {
                                         <div className="card-heading">
                                             <h2>Respuestas por fecha</h2>
                                         </div>
-                                        <div className="chart-container parallel-card-body">
-
+                                        <div className="parallel-card-body">
+                                            <div></div>
                                         </div>
                                     </div>
                                 </LoadingOverlay>
@@ -689,21 +558,6 @@ class SummaryDashboard extends React.Component {
             </div>
         )
     }
-}
-
-function Table(props) {
-    return <DataTable
-        keyField={props.id}
-        title={props.name}
-        columns={props.columns}
-        data={props.data}
-        fixedHeader
-        fixedHeaderScrollHeight="300px"
-        highlightOnHover
-        noHeader={true}
-        // selectableRows={true}
-        pagination
-    />;
 }
 
 export default SummaryDashboard
