@@ -268,6 +268,12 @@ class SummaryDashboard extends React.Component {
             if (this.props.isLoggedIn)
                 this.loadForm()
         }
+        // Update te default selected form when logging as a a new user
+        if (prevProps.forms !== this.props.forms) {
+            if (this.props.forms) {
+                this.setState({currentForm: this.props.forms[0]}, () => this.loadForm())
+            }
+        }
     }
 
     componentDidMount() {
