@@ -25,11 +25,15 @@ class App extends React.Component {
     componentDidMount() {
         // Check if the user has logged in already in the current session
         if (AuthenticationService.isUserLoggedIn())
-            AuthenticationService.renewBasicAuthenticationService() // Renew the authentication
-                .then(() => AuthenticationService.renewSuccessfulLogin(AuthenticationService.getLoggedInSession())) // Renew the auth headers on every consequent request
-                .then(() => this.setState({isAuthComplete: true}, // Notify state that the authentication is complete
-                    () => this.retrieveUserForms()))
-                .catch(error => console.log(error))
+            this.renewLoginSession()
+    }
+
+    renewLoginSession() {
+        AuthenticationService.renewBasicAuthenticationService() // Renew the authentication
+            .then(() => AuthenticationService.renewSuccessfulLogin(AuthenticationService.getLoggedInSession())) // Renew the auth headers on every consequent request
+            .then(() => this.setState({isAuthComplete: true}, // Notify state that the authentication is complete
+                () => this.retrieveUserForms()))
+            .catch(error => console.log('There was a problem logging to that user'))
     }
 
     retrieveUserForms() {
@@ -44,7 +48,7 @@ class App extends React.Component {
                         if (userForms.forms.length > 0) this.setState({userHasForms: true})
                         else this.setState({userHasForms: false})
                 }))
-                .catch(error => console.log(error))
+                .catch(error => console.log('There was a problem retrieving the user`s data'))
     }
 
     render() {

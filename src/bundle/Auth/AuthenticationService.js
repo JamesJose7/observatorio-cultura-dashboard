@@ -4,6 +4,8 @@ import koboApi from "../../koboApi";
 export const SESSION_ATTRIBUTE_NAME = 'session'
 export const USER_NAME_ATTRIBUTE_NAME = 'authenticatedUser'
 
+let INTERCEPTOR = null
+
 class AuthenticationService {
 
     executeBasicAuthenticationService(username, password) {
@@ -31,6 +33,7 @@ class AuthenticationService {
 
     logout() {
         sessionStorage.removeItem(SESSION_ATTRIBUTE_NAME);
+        this.removeAuthHeaders()
     }
 
     isUserLoggedIn() {
@@ -45,8 +48,13 @@ class AuthenticationService {
         return user
     }
 
+    removeAuthHeaders() {
+        // Reset headers
+        axios.interceptors.request.eject(INTERCEPTOR)
+    }
+
     setupAxiosInterceptors(token) {
-        axios.interceptors.request.use(
+        INTERCEPTOR = axios.interceptors.request.use(
             (config) => {
                 if (this.isUserLoggedIn()) {
                     config.headers.authorization = token
