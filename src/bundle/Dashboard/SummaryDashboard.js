@@ -53,7 +53,7 @@ class SummaryDashboard extends React.Component {
                     if (!(col.label[0].length === 0 || !col.label[0].trim())) { // Check if label is empty
                         columns.push({
                             name: col.label[0],
-                            selector: col.name,
+                            selector: col.$autoname,
                             type: col.type,
                             sortable: true
                         })

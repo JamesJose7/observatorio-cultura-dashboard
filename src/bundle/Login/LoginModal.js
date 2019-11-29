@@ -39,6 +39,12 @@ class LoginModal extends React.Component {
 
         const {isLoading, hasLoginFailed} = this.state
 
+        const handleGuestLogin = event => {
+            // Button loading
+            this.setState({isLoading: true})
+            authenticate('invitado', '123')
+        }
+
         const handleSubmit = event => {
             const form = event.currentTarget
             // Prevent page reloading
@@ -52,6 +58,10 @@ class LoginModal extends React.Component {
             let user = $(form).find('#formUser').val()
             let pass = $(form).find('#formPassword').val()
 
+            authenticate(user, pass)
+        }
+
+        const authenticate = (user, pass) => {
             // Execute authentication in authentication service
             AuthenticationService
                 .executeBasicAuthenticationService(user, pass)
@@ -67,7 +77,7 @@ class LoginModal extends React.Component {
                         hasLoginFailed: true,
                         isLoading: false
                     })
-            })
+                })
         }
 
         return (
@@ -99,7 +109,13 @@ class LoginModal extends React.Component {
                         <Button variant="primary" type="submit"
                                 disabled={isLoading}
                             >
-                            {isLoading ? 'Cargando…' : 'Iniciar'}
+                            {isLoading ? 'Cargando…' : 'Ingresar'}
+                        </Button>
+                        <Button variant="info" type="button"
+                                className="float-right"
+                                onClick={handleGuestLogin.bind(this)}
+                        >
+                            {isLoading ? 'Cargando…' : 'Invitado'}
                         </Button>
                     </Form>
                 </Modal.Body>
