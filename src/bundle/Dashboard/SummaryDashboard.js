@@ -5,9 +5,11 @@ import {Dropdown, Button, ButtonGroup, Modal} from "react-bootstrap";
 import LoadingOverlay from 'react-loading-overlay';
 import axios from 'axios'
 import $ from 'jquery'
+import Utils from "../Utils/Utils";
 import {BounceLoader} from "react-spinners";
-import CustomPieChart from "./CustomPieChart";
-import CustomBarChart from "./CustomBarChart";
+import CustomPieChart from "../Charts/CustomPieChart";
+import CustomBarChart from "../Charts/CustomBarChart";
+import NumberStatistics from "../Charts/NumberStatistics";
 
 /*const CancelToken = axios.CancelToken;
 let cancelMeta;
@@ -37,7 +39,8 @@ class SummaryDashboard extends React.Component {
         lastAnswerDate: '-',
         avgAnswersPerDay: 0,
         dateGraphData: [],
-        pieChartData: []
+        pieChartData: [],
+        numericData: []
     }
 
     fetchFormMetadata() {
@@ -174,7 +177,38 @@ class SummaryDashboard extends React.Component {
                 })
         })
 
-        // Dashboard values
+        // Filter integer and decimal columns
+        let numericColumns = []
+        let numericData = []
+        columns.forEach(col => {
+            if (col.type === 'integer' || col.type === 'decimal')
+                numericColumns.push(col)
+        })
+        // Calculate statistics for each numeric column
+        if (numericColumns.length > 0 && submissions.length > 0) {
+            numericColumns.forEach(col => {
+                let rawData = submissions.map(submission =>
+                    submission[col.selector] ? parseInt(submission[col.selector]) : 0)
+                // Get average, min, and max
+                let average = 0
+                rawData.forEach(x => average += x)
+                average /= rawData.length
+                let min = Math.min(...rawData)
+                let max = Math.max(...rawData)
+                // Create data object for each question
+                numericData.push({
+                    name: col.name,
+                    id: col.selector,
+                    average: Utils.math().round(average),
+                    min: min,
+                    max: max
+                })
+            })
+        }
+
+        // Dashboard summary values
+
+        // Submission dates
         let dates = []
         let simpleDates = []
         submissions.forEach(submission => {
@@ -224,6 +258,7 @@ class SummaryDashboard extends React.Component {
             dateGraphData: dateGraphData,
             pieChartData: pieChartData,
             rowsData: rowsData,
+            numericData: numericData,
             isLoading: false
         })
     }
@@ -297,7 +332,7 @@ class SummaryDashboard extends React.Component {
     handleCloseFormSelector = () => this.setState({showFormSelector: false})
 
     render() {
-        const {isLoading, error, currentForm, rowsData, pieChartData} = this.state
+        const {isLoading, error, currentForm, numericData, pieChartData} = this.state
 
         let currentFormData = this.getCachedForm(currentForm)
 
@@ -309,13 +344,6 @@ class SummaryDashboard extends React.Component {
                 id: "",
                 name: ""
             }
-
-        function round(num) {
-            let rounded = parseFloat(Math.round(num * 100) / 100).toFixed(2)
-                if (rounded > 0.00)
-                    return rounded
-            return 0
-        }
 
         return (
             <div>
@@ -368,7 +396,7 @@ class SummaryDashboard extends React.Component {
                                             <span>Total de respuestas</span>
                                             <p>{ currentFormData.data.length }</p>
                                             <span>Respuestas por día</span>
-                                            <p>{round(this.state.avgAnswersPerDay)}</p>
+                                            <p>{Utils.math().round(this.state.avgAnswersPerDay)}</p>
                                             <span>Última respuesta</span>
                                             <p>{this.state.lastAnswerDate}</p>
                                         </div>
@@ -420,6 +448,15 @@ class SummaryDashboard extends React.Component {
                                                 </Dropdown>
                                             </div>
                                         </div>
+                                        {pieChartData.length > 0 ? (
+                                            <div className="row">
+                                                <div className="col-12">
+                                                    <h3 className="data-question-title">Preguntas de opción múltiple</h3>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div></div>
+                                        )}
                                         <div className="row">
                                             {pieChartData.map(question => (
                                                 <div className="col-lg-6 mb-4" key={question.id}>
@@ -429,6 +466,27 @@ class SummaryDashboard extends React.Component {
                                                             data={question.data}
                                                         />
                                                     </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        {numericData.length > 0 ? (
+                                            <div className="row">
+                                                <div className="col-12">
+                                                    <h3 className="data-question-title">Preguntas numéricas</h3>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div></div>
+                                        )}
+                                        <div className="row">
+                                            {numericData.map(question => (
+                                                <div className="col-lg-6 mb-4" key={question.id}>
+                                                    <h5>{question.name}</h5>
+                                                    <NumberStatistics
+                                                        average={question.average}
+                                                        min={question.min}
+                                                        max={question.max}
+                                                    />
                                                 </div>
                                             ))}
                                         </div>

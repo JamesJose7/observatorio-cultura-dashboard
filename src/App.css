@@ -150,6 +150,14 @@ h1 {
     background-color: #173f5f99 !important;
 }
 
+.data-question-title {
+    margin-bottom: 20px;
+    margin-top: 10px;
+    padding-bottom: 10px;
+    color: #173f5f;
+    border-bottom: 1px solid #173f5f;
+}
+
 /* Device specific breakpoints */
 @media (max-width: 1199px) {
     .menu-option {
