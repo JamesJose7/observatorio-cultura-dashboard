@@ -96,15 +96,20 @@ class SummaryDashboard extends React.Component {
         // Get form submissions url
         let url = `${koboApi.urls().formSubmissions(this.state.currentForm.formId, this.state.currentForm.token)}`
 
-        function cleanResponses(data, choicesLabels) {
+        function cleanResponses(data, choicesLabels, columns) {
             // Change every value from their ID into their actual label
             data.forEach(response => {
                 for (let key in response)
                     if (response.hasOwnProperty(key)) {
-                        let val = response[key];
-                        if (val)
-                            if (choicesLabels[val]) // If the label is found, replace it with it's value
-                                response[key] = choicesLabels[val]
+                        // Check if it's a numeric question to skip this
+                        let currentCol = columns.find(q => q.selector === key)
+                        let questionType = currentCol ? currentCol.type : ''
+                        if (questionType !== 'integer' && questionType !== 'decimal') {
+                            let val = response[key];
+                            if (val)
+                                if (choicesLabels[val]) // If the label is found, replace it with it's value
+                                    response[key] = choicesLabels[val]
+                        }
                     }
 
             })
@@ -114,7 +119,7 @@ class SummaryDashboard extends React.Component {
 
         axios.get(url)
             .then((response) => response.data.results)
-            .then(data => cleanResponses(data, this.state.choicesLabels))
+            .then(data => cleanResponses(data, this.state.choicesLabels, this.state.columns))
             .then(data =>
                 this.setState({
                     data: data,
@@ -188,7 +193,7 @@ class SummaryDashboard extends React.Component {
         if (numericColumns.length > 0 && submissions.length > 0) {
             numericColumns.forEach(col => {
                 let rawData = submissions.map(submission =>
-                    submission[col.selector] ? parseInt(submission[col.selector]) : 0)
+                    submission[col.selector] ? parseFloat(submission[col.selector]) : 0)
                 // Get average, min, and max
                 let average = 0
                 rawData.forEach(x => average += x)
