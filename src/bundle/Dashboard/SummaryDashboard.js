@@ -4,31 +4,16 @@ import koboApi from '../../koboApi'
 import {Dropdown, Button, ButtonGroup, Modal} from "react-bootstrap";
 import LoadingOverlay from 'react-loading-overlay';
 import axios from 'axios'
-import $ from 'jquery'
 import Utils from "../Utils/Utils";
 import {BounceLoader} from "react-spinners";
 import CustomPieChart from "../Charts/CustomPieChart";
 import CustomBarChart from "../Charts/CustomBarChart";
 import NumberStatistics from "../Charts/NumberStatistics";
 
-/*const CancelToken = axios.CancelToken;
-let cancelMeta;
-const options = {
-    headers: {
-        'Authorization': config.koboToken,
-        'X-Requested-With': 'application/json'
-    },
-    cancelToken: new CancelToken(function executor(c) {
-        // An executor function receives a cancel function as a parameter
-        cancelMeta = c;
-    })
-}*/
-
 class SummaryDashboard extends React.Component {
     state = {
         isLoading: true,
         data: [],
-        rowsData: [],
         columns: [],
         choicesLabels: {},
         error: null,
@@ -127,24 +112,7 @@ class SummaryDashboard extends React.Component {
             .catch(error => this.setState({error, isLoading: false}));
     }
 
-    countValuesRepetitions(data, val) {
-        let counts = {}
-        data.forEach(function (x) {
-            counts[x[val]] = (counts[x[val]] || 0) + 1;
-        })
-        return counts
-    }
-
-    convertToEstTime(date) {
-        let offset = -300; //Timezone offset for EST in minutes.
-        return new Date(date.getTime() + offset*60*1000);
-    }
-
     updateDashboard = arg => {
-        // Hide all tables and show only the currently selected one
-        $('.form-table-container').css("display", "none")
-        $('#' + this.state.currentForm.id).css("display", "block")
-
         // json response data
         const submissions = this.getCachedForm(this.state.currentForm).data
         const columns = this.getCachedForm(this.state.currentForm).columns
@@ -160,7 +128,7 @@ class SummaryDashboard extends React.Component {
         // Count value repetitions for each question
         pieChartColumns.forEach(pieCol => {
             // Repetition counts for each question
-            let counts = this.countValuesRepetitions(submissions, pieCol.selector)
+            let counts = Utils.math().countValuesRepetitions(submissions, pieCol.selector)
             //Create an object that will store the values
             let pieData = []
             for (let key in counts) {
@@ -222,7 +190,7 @@ class SummaryDashboard extends React.Component {
         })
 
         // Build submission date data for bar graph
-        let datesCounts = this.countValuesRepetitions(dates, 'fecha')
+        let datesCounts = Utils.math().countValuesRepetitions(dates, 'fecha')
         let dateGraphData = []
         for (let key in datesCounts) {
             if (datesCounts.hasOwnProperty(key))
@@ -231,19 +199,6 @@ class SummaryDashboard extends React.Component {
                     respuestas: datesCounts[key]
                 })
         }
-
-        let rowsData = []
-        /*if (columns) {
-            submissions.forEach(row => {
-                let rowData = []
-                columns.forEach(col => {
-                    if (submissions && submissions.length > 0)
-                        rowData.push(row[col.selector])
-                })
-                rowsData.push(rowData)
-            })
-        }*/
-
 
         // Average answers per day
         let avgAnswersPerDay = 0
@@ -254,7 +209,7 @@ class SummaryDashboard extends React.Component {
         let lastAnswerDate = "N/A"
         simpleDates = simpleDates.sort() // Sort dates to get the latest one
         if (submissions.length > 0)
-            lastAnswerDate = this.convertToEstTime(new Date(simpleDates[simpleDates.length-1])).toLocaleString()
+            lastAnswerDate = Utils.time().convertToEstTime(new Date(simpleDates[simpleDates.length-1])).toLocaleString()
 
         // setting state
         this.setState({
@@ -262,7 +217,6 @@ class SummaryDashboard extends React.Component {
             avgAnswersPerDay: avgAnswersPerDay,
             dateGraphData: dateGraphData,
             pieChartData: pieChartData,
-            rowsData: rowsData,
             numericData: numericData,
             isLoading: false
         })
@@ -320,10 +274,6 @@ class SummaryDashboard extends React.Component {
         // If the user is logged in already load his forms
         if (this.props.isLoggedIn)
             this.loadForm()
-    }
-
-    componentWillUnmount() {
-        // cancelMeta()
     }
 
     changeSelectedForm(form) {
@@ -459,9 +409,7 @@ class SummaryDashboard extends React.Component {
                                                     <h3 className="data-question-title">Preguntas de opción múltiple</h3>
                                                 </div>
                                             </div>
-                                        ) : (
-                                            <div></div>
-                                        )}
+                                        ) : null}
                                         <div className="row">
                                             {pieChartData.map(question => (
                                                 <div className="col-lg-6 mb-4" key={question.id}>
@@ -480,9 +428,7 @@ class SummaryDashboard extends React.Component {
                                                     <h3 className="data-question-title">Preguntas numéricas</h3>
                                                 </div>
                                             </div>
-                                        ) : (
-                                            <div></div>
-                                        )}
+                                        ) : null}
                                         <div className="row">
                                             {numericData.map(question => (
                                                 <div className="col-lg-6 mb-4" key={question.id}>
@@ -522,111 +468,113 @@ class SummaryDashboard extends React.Component {
                             </Modal.Body>
                         </Modal>
                     </div>
-
-
                     // If there is a delay in data, let's let the user know it's loading
                 ) : (
-                    <div className="placeholder container-fluid summary-dashboard">
-                        <div id="dashboard-header">
-                            <div className="row">
-                                <div className="col-lg-6">
-                                    <h1>-</h1>
-                                </div>
-                                <div className="col-lg-6">
-                                    <div className="form-actions">
-                                        <Button variant="info"
-                                                className="menu-option float-right">
-                                            Cambiar Formulario
-                                            <i className="material-icons">
-                                                menu
-                                            </i>
-                                        </Button>
-
-                                        <Button variant="info"
-                                                className="menu-option float-lg-right float-sm-left">
-                                            Abrir formulario
-                                            <i className="material-icons">
-                                                open_in_new
-                                            </i>
-                                        </Button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-lg-4 col-xl-3">
-                                <LoadingOverlay
-                                    active={true}
-                                    spinner={<BounceLoader color={'#ffc107'} />}
-                                >
-                                    <div className="card">
-                                        <div className="card-heading">
-                                            <h2>Resumen</h2>
-                                        </div>
-                                        <div className="form-summary-data parallel-card-body">
-                                            <span>Total de respuestas</span>
-                                            <p>0</p>
-                                            <span>Respuestas por día</span>
-                                            <p>0</p>
-                                            <span>Última respuesta</span>
-                                            <p>-</p>
-                                        </div>
-                                    </div>
-                                </LoadingOverlay>
-                            </div>
-                            <div className="col-lg-8 col-xl-9">
-                                <LoadingOverlay
-                                    active={true}
-                                    spinner={<BounceLoader color={'#ffc107'} />}
-                                >
-                                    <div className="card">
-                                        <div className="card-heading">
-                                            <h2>Respuestas por fecha</h2>
-                                        </div>
-                                        <div className="parallel-card-body">
-                                            <div></div>
-                                        </div>
-                                    </div>
-                                </LoadingOverlay>
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="col-12">
-                                <LoadingOverlay
-                                    active={true}
-                                    spinner={<BounceLoader color={'#ffc107'} />}
-                                >
-                                    <div className="card" style={{minHeight: "auto"}}>
-                                        <div className="row mb-4">
-                                            <h2 className="col-8">Datos del formulario</h2>
-                                            <div className="col-4">
-                                                <Dropdown as={ButtonGroup} className="float-right">
-                                                    <Button disabled={true} variant="outline-primary">
-                                                        Descargar
-                                                    </Button>
-
-                                                    <Dropdown.Toggle split variant="primary" id="dropdown-split-basic"/>
-
-                                                    <Dropdown.Menu drop={'left'}>
-                                                        <Dropdown.Item>CSV</Dropdown.Item>
-                                                        <Dropdown.Item>XLSX</Dropdown.Item>
-                                                    </Dropdown.Menu>
-                                                </Dropdown>
-                                            </div>
-                                        </div>
-                                        <div className="form-table-container">
-
-                                        </div>
-                                    </div>
-                                </LoadingOverlay>
-                            </div>
-                        </div>
-                    </div>
+                    <PlaceholderDashboard/>
                 )}
             </div>
         )
     }
+}
+
+function PlaceholderDashboard() {
+    return (
+        <div className="placeholder container-fluid summary-dashboard">
+            <div id="dashboard-header">
+                <div className="row">
+                    <div className="col-lg-6">
+                        <h1>-</h1>
+                    </div>
+                    <div className="col-lg-6">
+                        <div className="form-actions">
+                            <Button variant="info"
+                                    className="menu-option float-right">
+                                Cambiar Formulario
+                                <i className="material-icons">
+                                    menu
+                                </i>
+                            </Button>
+
+                            <Button variant="info"
+                                    className="menu-option float-lg-right float-sm-left">
+                                Abrir formulario
+                                <i className="material-icons">
+                                    open_in_new
+                                </i>
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className="row">
+                <div className="col-lg-4 col-xl-3">
+                    <LoadingOverlay
+                        active={true}
+                        spinner={<BounceLoader color={'#ffc107'} />}
+                    >
+                        <div className="card">
+                            <div className="card-heading">
+                                <h2>Resumen</h2>
+                            </div>
+                            <div className="form-summary-data parallel-card-body">
+                                <span>Total de respuestas</span>
+                                <p>0</p>
+                                <span>Respuestas por día</span>
+                                <p>0</p>
+                                <span>Última respuesta</span>
+                                <p>-</p>
+                            </div>
+                        </div>
+                    </LoadingOverlay>
+                </div>
+                <div className="col-lg-8 col-xl-9">
+                    <LoadingOverlay
+                        active={true}
+                        spinner={<BounceLoader color={'#ffc107'} />}
+                    >
+                        <div className="card">
+                            <div className="card-heading">
+                                <h2>Respuestas por fecha</h2>
+                            </div>
+                            <div className="parallel-card-body">
+                                <div></div>
+                            </div>
+                        </div>
+                    </LoadingOverlay>
+                </div>
+            </div>
+
+            <div className="row">
+                <div className="col-12">
+                    <LoadingOverlay
+                        active={true}
+                        spinner={<BounceLoader color={'#ffc107'} />}
+                    >
+                        <div className="card" style={{minHeight: "auto"}}>
+                            <div className="row mb-4">
+                                <h2 className="col-8">Datos del formulario</h2>
+                                <div className="col-4">
+                                    <Dropdown as={ButtonGroup} className="float-right">
+                                        <Button disabled={true} variant="outline-primary">
+                                            Descargar
+                                        </Button>
+
+                                        <Dropdown.Toggle split variant="primary" id="dropdown-split-basic"/>
+
+                                        <Dropdown.Menu drop={'left'}>
+                                            <Dropdown.Item>CSV</Dropdown.Item>
+                                            <Dropdown.Item>XLSX</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                </div>
+                            </div>
+                            <div/>
+                        </div>
+                    </LoadingOverlay>
+                </div>
+            </div>
+        </div>
+    )
 }
 
 export default SummaryDashboard
