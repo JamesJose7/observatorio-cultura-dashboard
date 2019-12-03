@@ -4,6 +4,7 @@ import koboApi from '../../koboApi'
 import {Dropdown, Button, ButtonGroup, Modal} from "react-bootstrap";
 import LoadingOverlay from 'react-loading-overlay';
 import axios from 'axios'
+import lodash from 'lodash'
 import Utils from "../Utils/Utils";
 import {BounceLoader} from "react-spinners";
 import CustomPieChart from "../Charts/CustomPieChart";
@@ -25,6 +26,7 @@ class SummaryDashboard extends React.Component {
         avgAnswersPerDay: 0,
         dateGraphData: [],
         pieChartData: [],
+        multiChoiceData: [],
         numericData: []
     }
 
@@ -86,10 +88,10 @@ class SummaryDashboard extends React.Component {
             data.forEach(response => {
                 for (let key in response)
                     if (response.hasOwnProperty(key)) {
-                        // Check if it's a numeric question to skip this
+                        // Check if it's a numeric question or multiple choice to skip this
                         let currentCol = columns.find(q => q.selector === key)
                         let questionType = currentCol ? currentCol.type : ''
-                        if (questionType !== 'integer' && questionType !== 'decimal') {
+                        if (questionType !== 'integer' && questionType !== 'decimal' && questionType !== 'select_multiple') {
                             let val = response[key];
                             if (val)
                                 if (choicesLabels[val]) // If the label is found, replace it with it's value
@@ -116,14 +118,11 @@ class SummaryDashboard extends React.Component {
         // json response data
         const submissions = this.getCachedForm(this.state.currentForm).data
         const columns = this.getCachedForm(this.state.currentForm).columns
+        const choicesLabels = this.state.choicesLabels
 
-        // Filter columns that are eligible for pie charting
-        let pieChartColumns = []
+        // Filter columns from 'select_one' type questions
+        let pieChartColumns = columns.filter(col => col.type === 'select_one')
         let pieChartData = []
-        columns.forEach(col => {
-            if (col.type === 'select_one')
-                pieChartColumns.push(col)
-        })
 
         // Count value repetitions for each question
         pieChartColumns.forEach(pieCol => {
@@ -149,6 +148,57 @@ class SummaryDashboard extends React.Component {
                     data: pieData
                 })
         })
+
+        // Filter columns from 'select_multiple' type questions
+        let multChoiceColumns = columns.filter(col => col.type === 'select_multiple')
+        let multChoiceData = []
+
+        // Count value repetitions for each question
+        multChoiceColumns.forEach(col => {
+            // Divide multiple answers into individual objects to replace the proper label and count them properly
+            let processedAnswers = []
+            let rawAnsers = submissions.map(submission => lodash.pick(submission, col.selector))
+            rawAnsers.forEach(ans => {
+                if (ans[col.selector]) // Replace labels on each answer
+                    if (!ans[col.selector].includes(' ')) // Push individual answers
+                        processedAnswers.push(ans)
+                    else { // Divide multiple answers
+                        let dividedAnswers = ans[col.selector].split(' ').map(ans => {return {[col.selector]: ans}})
+                        processedAnswers.push(...dividedAnswers)
+                    }
+            })
+            // Replace labels
+            processedAnswers.forEach(ans => {
+                if (ans.hasOwnProperty(col.selector)) {
+                    let val = ans[col.selector];
+                    if (val)
+                        if (choicesLabels[val]) // If the label is found, replace it with it's value
+                            ans[col.selector] = choicesLabels[val]
+                }
+            })
+            // Repetition counts for each question
+            let counts = Utils.math().countValuesRepetitions(processedAnswers, col.selector)
+            //Create an object that will store the values
+            let chartData = []
+            for (let key in counts) {
+                if (counts.hasOwnProperty(key)) {
+                    if (key !== "undefined") {
+                        chartData.push({
+                            "id": key,
+                            "label": key,
+                            "value": counts[key]
+                        })
+                    }
+                }
+            }
+            if (chartData.length > 0)
+                multChoiceData.push({
+                    name: col.name,
+                    id: col.selector,
+                    data: chartData
+                })
+        })
+
 
         // Filter integer and decimal columns
         let numericColumns = []
@@ -217,6 +267,7 @@ class SummaryDashboard extends React.Component {
             avgAnswersPerDay: avgAnswersPerDay,
             dateGraphData: dateGraphData,
             pieChartData: pieChartData,
+            multiChoiceData: multChoiceData,
             numericData: numericData,
             isLoading: false
         })
@@ -287,7 +338,7 @@ class SummaryDashboard extends React.Component {
     handleCloseFormSelector = () => this.setState({showFormSelector: false})
 
     render() {
-        const {isLoading, error, currentForm, numericData, pieChartData} = this.state
+        const {isLoading, error, currentForm, numericData, pieChartData, multiChoiceData} = this.state
 
         let currentFormData = this.getCachedForm(currentForm)
 
@@ -403,14 +454,12 @@ class SummaryDashboard extends React.Component {
                                                 </Dropdown>
                                             </div>
                                         </div>
-                                        {pieChartData.length > 0 ? (
-                                            <div className="row">
-                                                <div className="col-12">
-                                                    <h3 className="data-question-title">Preguntas de opción múltiple</h3>
-                                                </div>
-                                            </div>
-                                        ) : null}
+                                        <ChartGroupTitle
+                                            isShown={pieChartData.length > 0}
+                                            title="Preguntas de opción múltiple"
+                                        />
                                         <div className="row">
+                                            {/* select_one questions */}
                                             {pieChartData.map(question => (
                                                 <div className="col-lg-6 mb-4" key={question.id}>
                                                     <h5>{question.name}</h5>
@@ -421,14 +470,22 @@ class SummaryDashboard extends React.Component {
                                                     </div>
                                                 </div>
                                             ))}
-                                        </div>
-                                        {numericData.length > 0 ? (
-                                            <div className="row">
-                                                <div className="col-12">
-                                                    <h3 className="data-question-title">Preguntas numéricas</h3>
+                                            {/* select_multiple questions */}
+                                            {multiChoiceData.map(question => (
+                                                <div className="col-lg-6 mb-4" key={question.id}>
+                                                    <h5>{question.name} (Selección múltiple)</h5>
+                                                    <div className="chart-container">
+                                                        <CustomPieChart
+                                                            data={question.data}
+                                                        />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        ) : null}
+                                            ))}
+                                        </div>
+                                        <ChartGroupTitle
+                                            isShown={numericData.length > 0}
+                                            title="Preguntas numéricas"
+                                        />
                                         <div className="row">
                                             {numericData.map(question => (
                                                 <div className="col-lg-6 mb-4" key={question.id}>
@@ -475,6 +532,18 @@ class SummaryDashboard extends React.Component {
             </div>
         )
     }
+}
+
+function ChartGroupTitle(props) {
+    if (props.isShown)
+        return (
+            <div className="row">
+                <div className="col-12">
+                    <h3 className="data-question-title">{props.title}</h3>
+                </div>
+            </div>
+        )
+    return null
 }
 
 function PlaceholderDashboard() {
