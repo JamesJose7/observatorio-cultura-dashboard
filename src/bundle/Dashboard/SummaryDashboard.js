@@ -11,6 +11,8 @@ import CustomPieChart from "../Charts/CustomPieChart";
 import CustomBarChart from "../Charts/CustomBarChart";
 import NumberStatistics from "../Charts/NumberStatistics";
 
+import ReactGA from 'react-ga';
+
 class SummaryDashboard extends React.Component {
     state = {
         isLoading: true,
@@ -293,7 +295,19 @@ class SummaryDashboard extends React.Component {
         // Check if it's cached already
         if (!this.getCachedForm(this.state.currentForm)) { // If not, retrieve it and cache it
             this.fetchFormMetadata()
+            // GA Event
+            ReactGA.event({
+                category: 'Forms',
+                action: 'Load uncached form',
+                label: this.state.currentForm.name
+            });
         } else{
+            // GA Event
+            ReactGA.event({
+                category: 'Forms',
+                action: 'Load cached form',
+                label: this.state.currentForm.name
+            });
             this.setState({
                 isLoading: false
             }, () => this.updateDashboard()) // Update dashboard once finished
@@ -328,6 +342,12 @@ class SummaryDashboard extends React.Component {
     }
 
     changeSelectedForm(form) {
+        // GA Event
+        ReactGA.event({
+            category: 'Forms',
+            action: 'Changed form',
+            label: form.name
+        });
         // Close modal
         this.handleCloseFormSelector.apply()
         // Change state to new selected form

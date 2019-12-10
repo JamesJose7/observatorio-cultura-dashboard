@@ -4,6 +4,8 @@ import {Button, Form, Modal} from "react-bootstrap"
 import $ from 'jquery'
 import AuthenticationService from "../Auth/AuthenticationService";
 
+import ReactGA from 'react-ga';
+
 
 class LoginModal extends React.Component {
 
@@ -40,12 +42,22 @@ class LoginModal extends React.Component {
         const {isLoading, hasLoginFailed} = this.state
 
         const handleGuestLogin = event => {
+            // GA Event
+            ReactGA.event({
+                category: 'Login',
+                action: 'Guest Login'
+            });
             // Button loading
             this.setState({isLoading: true})
             authenticate('invitado', '123')
         }
 
         const handleSubmit = event => {
+            // GA Event
+            ReactGA.event({
+                category: 'Login',
+                action: 'Credentials Login'
+            });
             const form = event.currentTarget
             // Prevent page reloading
             event.preventDefault()

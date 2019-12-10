@@ -5,6 +5,8 @@ import {Nav, Navbar} from "react-bootstrap";
 import LoginModal from "../Login/LoginModal";
 import AuthenticationService from "../Auth/AuthenticationService";
 
+import ReactGA from 'react-ga';
+
 class Header extends React.Component {
 
     state = {
@@ -15,6 +17,11 @@ class Header extends React.Component {
     handleCloseLoginModal = () => this.setState({showLoginModal: false})
 
     closeSession = () => {
+        // GA Event
+        ReactGA.event({
+            category: 'Login',
+            action: 'Close session'
+        });
         // Close session from auth service
         AuthenticationService.logout()
         this.props.changeLogin(false)

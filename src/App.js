@@ -6,6 +6,8 @@ import AuthenticationService from "./bundle/Auth/AuthenticationService";
 import axios from 'axios'
 import koboApi from "./koboApi";
 
+import ReactGA from 'react-ga';
+
 class App extends React.Component {
 
     state = {
@@ -23,12 +25,22 @@ class App extends React.Component {
     }
 
     componentDidMount() {
+        // Initialize Google Analytics
+        // Google Analytics
+        ReactGA.initialize('UA-122300566-4');
+        ReactGA.pageview('/');
         // Check if the user has logged in already in the current session
         if (AuthenticationService.isUserLoggedIn())
             this.renewLoginSession()
     }
 
     renewLoginSession() {
+        // GA Event
+        ReactGA.event({
+            category: 'Login',
+            action: 'Renewed session',
+            label: 'Refresh'
+        });
         AuthenticationService.renewBasicAuthenticationService() // Renew the authentication
             .then(() => AuthenticationService.renewSuccessfulLogin(AuthenticationService.getLoggedInSession())) // Renew the auth headers on every consequent request
             .then(() => this.setState({isAuthComplete: true}, // Notify state that the authentication is complete
