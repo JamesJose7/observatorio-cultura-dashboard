@@ -12,6 +12,7 @@ import CustomBarChart from "../Charts/CustomBarChart";
 import NumberStatistics from "../Charts/NumberStatistics";
 
 import ReactGA from 'react-ga';
+import WordCloudChart from "../Charts/WordCloudChart";
 
 class SummaryDashboard extends React.Component {
     state = {
@@ -22,6 +23,8 @@ class SummaryDashboard extends React.Component {
         error: null,
         currentForm: this.props.forms[0], // select first form by default
         showFormSelector: false,
+        showTextWordClouds: true,
+        showStructuredWordClouds: false,
         cachedForms: [],
         // Graphs
         lastAnswerDate: '-',
@@ -29,7 +32,8 @@ class SummaryDashboard extends React.Component {
         dateGraphData: [],
         pieChartData: [],
         multiChoiceData: [],
-        numericData: []
+        numericData: [],
+        textQuestionData: []
     }
 
     fetchFormMetadata() {
@@ -118,9 +122,54 @@ class SummaryDashboard extends React.Component {
 
     updateDashboard = arg => {
         // json response data
-        const submissions = this.getCachedForm(this.state.currentForm).data
-        const columns = this.getCachedForm(this.state.currentForm).columns
+        let cachedForm = this.getCachedForm(this.state.currentForm);
+        const submissions = cachedForm.data
+        const columns = cachedForm.columns
         const choicesLabels = this.state.choicesLabels
+
+        // Filter columns from 'text' type questions
+        let textQuestionColumns = columns.filter(col => col.type === 'text')
+        let textQuestionData = []
+
+        textQuestionColumns.forEach(col => {
+            // Accumulate responses into a single variable for individual word cloud chart
+            let accumulator = "";
+            accumulator = submissions.reduce((acc, currentValue) => {
+                if (currentValue.hasOwnProperty(col.selector))
+                    acc += ' ' + currentValue[col.selector]
+                return acc
+            }, '')
+
+            // Retrieve all answers as individual objects and filter out unanswered questions
+            let data = submissions.map(submission => {
+                let obj = {}
+                if(submission.hasOwnProperty(col.selector)) {
+                    obj.tag = submission[col.selector]
+                    return obj
+                }
+                return undefined
+            })
+            data = data.filter(x => x !== undefined)
+            // Count repetitions for each answer
+            let counts = Utils.math().countValuesRepetitions(data, 'tag')
+            // Build an object array for the structured data word cloud chart
+            let weightedWords = []
+            for (let key in counts) {
+                let obj = {}
+                obj.tag = key
+                obj.weight = counts[key]
+                weightedWords.push(obj)
+            }
+
+            // Exclude empty series and emails
+            if (accumulator.length > 0 && weightedWords.length > 0 && !accumulator.includes('@'))
+                textQuestionData.push({
+                    id: col.selector,
+                    name: col.name,
+                    text: accumulator,
+                    structuredData: weightedWords
+                })
+        })
 
         // Filter columns from 'select_one' type questions
         let pieChartColumns = columns.filter(col => col.type === 'select_one')
@@ -271,6 +320,7 @@ class SummaryDashboard extends React.Component {
             pieChartData: pieChartData,
             multiChoiceData: multChoiceData,
             numericData: numericData,
+            textQuestionData: textQuestionData,
             isLoading: false
         })
     }
@@ -357,8 +407,16 @@ class SummaryDashboard extends React.Component {
     handleShowFormSelector = () => this.setState({showFormSelector: true})
     handleCloseFormSelector = () => this.setState({showFormSelector: false})
 
+    toggleWordCloudCharts() {
+        if (this.state.showTextWordClouds)
+            this.setState({showTextWordClouds: false, showStructuredWordClouds: true})
+        if (this.state.showStructuredWordClouds)
+            this.setState({showTextWordClouds: true, showStructuredWordClouds: false})
+    }
+
     render() {
-        const {isLoading, error, currentForm, numericData, pieChartData, multiChoiceData} = this.state
+        const {isLoading, error, currentForm, numericData, pieChartData, multiChoiceData, textQuestionData,
+                showTextWordClouds, showStructuredWordClouds} = this.state
 
         let currentFormData = this.getCachedForm(currentForm)
 
@@ -536,6 +594,34 @@ class SummaryDashboard extends React.Component {
                                                         min={question.min}
                                                         max={question.max}
                                                     />
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <ChartGroupTitle
+                                            isShown={true}
+                                            title="Preguntas de respuesta abierta"
+                                        />
+                                        <div className="row pl-3 pr-3">
+                                            <Button variant="info" className="ml-auto mr-auto mb-4 col-lg-6" onClick={() => this.toggleWordCloudCharts()}>
+                                                {showTextWordClouds ? 'Mostrar conjuntos de palabras' : 'Mostrar palabras únicas'}
+                                            </Button>
+                                        </div>
+                                        <div className="row">
+                                            {textQuestionData.map(question => (
+                                                <div className="col-lg-6 mb-4" key={question.id}>
+                                                    <h5>{question.name}</h5>
+                                                    {showTextWordClouds ?
+                                                        <WordCloudChart
+                                                            id={question.id + '-text'}
+                                                            text={question.text}
+                                                        />
+                                                        : null}
+                                                    {showStructuredWordClouds ?
+                                                        <WordCloudChart
+                                                            id={question.id + '-structured'}
+                                                            structuredData={question.structuredData}
+                                                        />
+                                                        : null}
                                                 </div>
                                             ))}
                                         </div>
