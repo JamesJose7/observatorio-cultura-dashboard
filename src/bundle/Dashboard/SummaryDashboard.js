@@ -371,10 +371,31 @@ class SummaryDashboard extends React.Component {
                 name: ""
             }
 
+        if (error) // Show error message
+            console.log('Error message from back-end: ' + error.message)
+
         return (
             <div>
                 {/*Display a message if we encounter an error*/}
-                {error ? <p>{error.message}</p> : null}
+                {error ?
+                    <Modal
+                        show={true}
+                        size="lg"
+                        onHide={() => null}
+                        aria-labelledby="contained-modal-title-vcenter"
+                        centered
+                    >
+                        <Modal.Header>
+                            <Modal.Title className="text-danger">Error</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <p className="text-danger">Tenemos problemas al comunicarnos con el servidor</p>
+                            <p>Es posible que se encuentre en mantenimiento</p>
+                            <p>Por favor intente de nuevo mas tarde</p>
+                            <p>Lamentamos los inconvenientes</p>
+                        </Modal.Body>
+                    </Modal>
+                    : null}
 
                 {/*// data check*/}
                 {!isLoading ? (
