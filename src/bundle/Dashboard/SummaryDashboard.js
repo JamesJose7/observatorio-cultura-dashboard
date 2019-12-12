@@ -598,7 +598,7 @@ class SummaryDashboard extends React.Component {
                                             ))}
                                         </div>
                                         <ChartGroupTitle
-                                            isShown={true}
+                                            isShown={textQuestionData.length > 0}
                                             title="Preguntas de respuesta abierta"
                                         />
                                         <div className="row pl-3 pr-3">
