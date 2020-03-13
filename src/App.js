@@ -8,6 +8,19 @@ import koboApi from "./koboApi";
 
 import ReactGA from 'react-ga';
 
+import {
+    BrowserRouter,
+    Route,
+    Switch
+} from 'react-router-dom';
+
+import {createBrowserHistory} from 'history';
+import NotFound from "./NotFound";
+
+const history = createBrowserHistory({
+    basename: process.env.PUBLIC_URL
+});
+
 class App extends React.Component {
 
     state = {
@@ -68,27 +81,37 @@ class App extends React.Component {
         const {isAuthComplete, userHasForms, userForms} = this.state
 
         return (
-            <div className="App">
-                <Header
-                    isLoggedIn={AuthenticationService.isUserLoggedIn()}
-                    changeLogin={this.changeLoginState.bind(this)}
-                    loggedUsername={this.state.loggedUsername}
-                />
+            <BrowserRouter history={history} basename="koboPolls">
+                <div className="App">
+                    <Switch>
+                        <Route exact path="/dashboard" component={(props) => (
+                            <React.Fragment>
+                                <Header
+                                    isLoggedIn={AuthenticationService.isUserLoggedIn()}
+                                    changeLogin={this.changeLoginState.bind(this)}
+                                    loggedUsername={this.state.loggedUsername}
+                                />
 
-                {isAuthComplete && userHasForms ? (
-                    <SummaryDashboard
-                        isLoggedIn={AuthenticationService.isUserLoggedIn()}
-                        forms={userForms.forms}
-                    />
-                ) : (<div></div>)
-                }
+                                {isAuthComplete && userHasForms ? (
+                                    <SummaryDashboard
+                                        isLoggedIn={AuthenticationService.isUserLoggedIn()}
+                                        forms={userForms.forms}
+                                    />
+                                ) : (<div></div>)
+                                }
+                            </React.Fragment>
+                        )
+                        }/>
+                        <Route component={NotFound}/>
+                    </Switch>
 
-                {/*<FormDashboard
-                formName={"Escenarios públicos"}
-                submissionsLink={"https://kc.kobotoolbox.org/jeeguiguren/reports/abSepFikh7Kh6E6dwrbxAq/export.xlsx"}
-            />*/}
+                    {/*<FormDashboard
+                    formName={"Escenarios públicos"}
+                    submissionsLink={"https://kc.kobotoolbox.org/jeeguiguren/reports/abSepFikh7Kh6E6dwrbxAq/export.xlsx"}
+                />*/}
 
-            </div>
+                </div>
+            </BrowserRouter>
         )
     }
 }
